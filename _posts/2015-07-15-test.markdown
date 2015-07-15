@@ -1,0 +1,17 @@
+---
+layout: post
+title:  "this is a test"
+date:   2015-07-15 23:54:32
+categories: test
+---
+这是第一篇测试文章 - `test`
+
+![lufei](/images/lufei.png "katong lufei")
+
+{% highlight ruby %}
+int main()
+{
+	printf("hello github.\n");
+}
+#=> prints 'hello github.' to STDOUT.
+{% endhighlight %}
