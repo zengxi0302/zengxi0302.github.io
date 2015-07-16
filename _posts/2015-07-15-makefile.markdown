@@ -1,0 +1,41 @@
+---
+layout: post
+title:  "用户态和内核态Makefile简单模板"
+date:   2015-07-17 00:18:32
+categories: linux
+---
+
+用户态Makefile
+
+{% highlight ruby %}
+
+SRCS = $(wildcard *.c)
+OBJS = $(SRCS:.c = .o)
+CC = gcc
+INCLUDES = -I/usr/include
+LIBS = -L/usr/lib -lpthread
+CCFLAGS = -g -Wall -O0
+main : $(OBJS)
+        $(CC) $^ -o $@ $(INCLUDES) $(LIBS) 
+%.o : %.c
+        $(CC) -c {1}lt;; $(CCFLAGS) 
+clean:
+        -rm *.o
+        -rm main
+
+{% endhighlight %}
+
+内核态Makefile
+
+{% highlight ruby %}
+
+obj-m := delay_workqueue.o
+
+PWD = $(shell pwd)
+KERNELDIR = /lib/modules/$(shell uname -r)/build
+
+default: 
+    $(MAKE) -C $(KERNELDIR) M=$(PWD) modules
+
+{% endhighlight %}
+
