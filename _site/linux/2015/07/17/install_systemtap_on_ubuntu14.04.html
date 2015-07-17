@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>    
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+
+  <title>在ubuntu14.04下安装systemtap</title>
+  <meta name="description" content="获取对应内核版本的debuginfo安装包">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://zengxi0302.github.io/linux/2015/07/17/install_systemtap_on_ubuntu14.04.html">
+  <link rel="alternate" type="application/atom+xml" title="zengxi0302's  blog" href="http://zengxi0302.github.io/feed.xml" />
+  <script src="/scripts/jquery-1.11.2.min.js"></script>
+  <script src="/scripts/pithy.js"></script>
+</head>
+
+
+  <body>
+    <header class="header">
+	<div class="header-container">
+		<div class="nav">
+			
+				<li>
+					<a href="/index.html">home</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/archive.html">archive</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/category.html">category</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/about.html">about</a>
+				</li>			
+			
+		</div>
+		<div class="description"> forgeting behind and looking foward! </div>		
+		<ul class="social-links">
+			<li>
+				<a href="https://github.com/zengxi0302" title="Github">
+					<img width="19px" height="19px" src="/images/github.png"/>
+				</a>
+			</li>
+			<li>
+				<a href="/feed.xml" title="RSS">
+					<img width="19px" height="19px" src="/images/rss.png"/>
+				</a>
+			</li>
+		</ul>		
+	</div>
+</header>
+
+    <br>
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+  <br>
+  <header class="post-header">
+    <h1 class="post-title">在ubuntu14.04下安装systemtap</h1>
+    <p class="post-meta">Jul 17, 2015</p>
+  </header>
+
+  <article class="post-content">
+    <h3 id="debuginfo"><em>获取对应内核版本的debuginfo安装包</em></h3>
+
+<p>首先，查询所用系统的内核版本</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">zengxi</span><span class="vi">@zengxi</span><span class="o">-</span><span class="ss">ubuntu</span><span class="p">:</span><span class="sr">/$ uname -r</span>
+<span class="sr">3.13.0-24-generic</span></code></pre></div>
+
+<p>本人机器是ubuntu14.04，可到一下网址获取debuginfo包</p>
+
+<p><a href="http://ddebs.ubuntu.com/pool/main/l/linux/linux-image-3.13.0-24-generic-dbgsym_3.13.0-24.46_i386.ddeb">http://ddebs.ubuntu.com/pool/main/l/linux/linux-image-3.13.0-24-generic-dbgsym_3.13.0-24.46_i386.ddeb</a></p>
+
+<p>然后，使用<code>dpkg -i linux-image-3.13.0-24-generic-dbgsym_3.13.0-24.46_i386.ddeb</code>安装</p>
+
+<p>安装完后确认/usr/lib/debug目录下有安装的文件。</p>
+
+<h3 id="systemtap"><em>安装systemtap</em></h3>
+
+<p><code>sudo apt-get install systemtap</code></p>
+
+<p>使用命令测试一下是不是安装成功</p>
+
+<p><code>stap -ve 'probe begin { log("hello world") exit () }'</code></p>
+
+<p>具体systemtap的原理和介绍可参考这篇文档</p>
+
+<p><a href="http://www.ibm.com/developerworks/cn/linux/l-cn-systemtap3/index.html">http://www.ibm.com/developerworks/cn/linux/l-cn-systemtap3/index.html</a></p>
+
+
+  </article>
+</div>
+
+      </div>
+    </div>
+    
+    <footer class="footer">
+  <div id="gotop">^</div>
+  <br>
+	@2015 Pithy Theme by Pawpaw.
+</footer>
+
+    
+  </body>
+
+</html>

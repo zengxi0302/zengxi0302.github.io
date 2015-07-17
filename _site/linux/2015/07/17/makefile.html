@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>    
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+
+  <title>用户态和内核态Makefile简单模板</title>
+  <meta name="description" content="用户态Makefile">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://zengxi0302.github.io/linux/2015/07/17/makefile.html">
+  <link rel="alternate" type="application/atom+xml" title="zengxi0302's  blog" href="http://zengxi0302.github.io/feed.xml" />
+  <script src="/scripts/jquery-1.11.2.min.js"></script>
+  <script src="/scripts/pithy.js"></script>
+</head>
+
+
+  <body>
+    <header class="header">
+	<div class="header-container">
+		<div class="nav">
+			
+				<li>
+					<a href="/index.html">home</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/archive.html">archive</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/category.html">category</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/about.html">about</a>
+				</li>			
+			
+		</div>
+		<div class="description"> forgeting behind and looking foward! </div>		
+		<ul class="social-links">
+			<li>
+				<a href="https://github.com/zengxi0302" title="Github">
+					<img width="19px" height="19px" src="/images/github.png"/>
+				</a>
+			</li>
+			<li>
+				<a href="/feed.xml" title="RSS">
+					<img width="19px" height="19px" src="/images/rss.png"/>
+				</a>
+			</li>
+		</ul>		
+	</div>
+</header>
+
+    <br>
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+  <br>
+  <header class="post-header">
+    <h1 class="post-title">用户态和内核态Makefile简单模板</h1>
+    <p class="post-meta">Jul 17, 2015</p>
+  </header>
+
+  <article class="post-content">
+    <p>用户态Makefile</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">SRCS</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="n">wildcard</span> <span class="o">*.</span><span class="n">c</span><span class="p">)</span>
+<span class="no">OBJS</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="ss">SRCS</span><span class="p">:</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="o">.</span><span class="n">o</span><span class="p">)</span>
+<span class="no">CC</span> <span class="o">=</span> <span class="n">gcc</span>
+<span class="no">INCLUDES</span> <span class="o">=</span> <span class="o">-</span><span class="n">I</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="kp">include</span>
+<span class="no">LIBS</span> <span class="o">=</span> <span class="o">-</span><span class="n">L</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span> <span class="o">-</span><span class="n">lpthread</span>
+<span class="no">CCFLAGS</span> <span class="o">=</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="no">Wall</span> <span class="o">-</span><span class="no">O0</span>
+<span class="n">main</span> <span class="p">:</span> <span class="err">$</span><span class="p">(</span><span class="no">OBJS</span><span class="p">)</span>
+        <span class="err">$</span><span class="p">(</span><span class="no">CC</span><span class="p">)</span> <span class="err">$</span><span class="o">^</span> <span class="o">-</span><span class="n">o</span> <span class="vg">$@</span> <span class="err">$</span><span class="p">(</span><span class="no">INCLUDES</span><span class="p">)</span> <span class="err">$</span><span class="p">(</span><span class="no">LIBS</span><span class="p">)</span> 
+<span class="sx">%.o : %.</span><span class="n">c</span>
+        <span class="err">$</span><span class="p">(</span><span class="no">CC</span><span class="p">)</span> <span class="o">-</span><span class="n">c</span> <span class="p">{</span><span class="mi">1</span><span class="p">}</span><span class="n">lt</span><span class="p">;;</span> <span class="err">$</span><span class="p">(</span><span class="no">CCFLAGS</span><span class="p">)</span> 
+<span class="ss">clean</span><span class="p">:</span>
+        <span class="o">-</span><span class="n">rm</span> <span class="o">*.</span><span class="n">o</span>
+        <span class="o">-</span><span class="n">rm</span> <span class="n">main</span></code></pre></div>
+
+<p>内核态Makefile</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">obj</span><span class="o">-</span><span class="n">m</span> <span class="p">:</span><span class="o">=</span> <span class="n">delay_workqueue</span><span class="o">.</span><span class="n">o</span>
+
+<span class="no">PWD</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="n">shell</span> <span class="n">pwd</span><span class="p">)</span>
+<span class="no">KERNELDIR</span> <span class="o">=</span> <span class="sr">/lib/mo</span><span class="n">dules</span><span class="o">/</span><span class="err">$</span><span class="p">(</span><span class="n">shell</span> <span class="n">uname</span> <span class="o">-</span><span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="n">build</span>
+
+<span class="ss">default</span><span class="p">:</span> 
+    <span class="err">$</span><span class="p">(</span><span class="no">MAKE</span><span class="p">)</span> <span class="o">-</span><span class="n">C</span> <span class="err">$</span><span class="p">(</span><span class="no">KERNELDIR</span><span class="p">)</span> <span class="n">M</span><span class="o">=</span><span class="err">$</span><span class="p">(</span><span class="no">PWD</span><span class="p">)</span> <span class="n">modules</span></code></pre></div>
+
+
+  </article>
+</div>
+
+      </div>
+    </div>
+    
+    <footer class="footer">
+  <div id="gotop">^</div>
+  <br>
+	@2015 Pithy Theme by Pawpaw.
+</footer>
+
+    
+  </body>
+
+</html>

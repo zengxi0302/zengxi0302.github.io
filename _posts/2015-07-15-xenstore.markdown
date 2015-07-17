@@ -1,0 +1,12 @@
+---
+layout: post
+title:  "xenstore操作方法"
+date:   2015-07-17 23:20:00
+categories: 虚拟化
+---
+
+XenStore是Xen提供的一个域间共享的存储系统，它以字符串形式存放了管理程序和前（frontend）、后端驱动程序(backend)的配置信息。
+Dom0管理所有的数据，而DomU通过共享内存，向Dom0请求与自己相关的键值，以此实现域间通信。
+Xen提供了多种接口用来操作XenStore：命令行的xenstore命令、用户空间的xs系列函数、内核的XenBus接口，都可以用来方便地操作XenStore的数据。
+
+![xenstore](/images/xenstore_operation.png "xenstore operations")

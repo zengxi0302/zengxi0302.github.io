@@ -5,12 +5,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width initial-scale=1">
 
-  <title>zengxi0302's  blog</title>
-  <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
-">
+  <title>xenstore操作方法</title>
+  <meta name="description" content="XenStore是Xen提供的一个域间共享的存储系统，它以字符串形式存放了管理程序和前（frontend）、后端驱动程序(backend)的配置信息。Dom0管理所有的数据，而DomU通过共享内存，向Dom0请求与自己相关的键值，以此实现域间通信。Xen提供了多种接口用来操作XenStore：命令行的xensto...">
 
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="canonical" href="http://zengxi0302.github.io/archive.html">
+  <link rel="canonical" href="http://zengxi0302.github.io/%E8%99%9A%E6%8B%9F%E5%8C%96/2015/07/18/xenstore.html">
   <link rel="alternate" type="application/atom+xml" title="zengxi0302's  blog" href="http://zengxi0302.github.io/feed.xml" />
   <script src="/scripts/jquery-1.11.2.min.js"></script>
   <script src="/scripts/pithy.js"></script>
@@ -27,11 +26,9 @@
 				</li>			
 			
 			
-			<span class="title">
 				<li>
 					<a href="/archive.html">archive</a>
-				</li>
-			</span>			
+				</li>			
 			
 			
 				<li>
@@ -63,43 +60,21 @@
     <br>
     <div class="page-content">
       <div class="wrapper">
-        <div class="well">
+        <div class="post">
+  <br>
+  <header class="post-header">
+    <h1 class="post-title">xenstore操作方法</h1>
+    <p class="post-meta">Jul 18, 2015</p>
+  </header>
 
-    
-        <h2>2015</h2>
-        <ul>
-    
-    <li><span>Jul 18</span>» <a href="/%E8%99%9A%E6%8B%9F%E5%8C%96/2015/07/18/xenstore.html">xenstore操作方法</a></li>
+  <article class="post-content">
+    <p>XenStore是Xen提供的一个域间共享的存储系统，它以字符串形式存放了管理程序和前（frontend）、后端驱动程序(backend)的配置信息。
+Dom0管理所有的数据，而DomU通过共享内存，向Dom0请求与自己相关的键值，以此实现域间通信。
+Xen提供了多种接口用来操作XenStore：命令行的xenstore命令、用户空间的xs系列函数、内核的XenBus接口，都可以用来方便地操作XenStore的数据。</p>
 
-    
-        
-        
-        
-    
-    <li><span>Jul 17</span>» <a href="/linux/2015/07/17/makefile.html">用户态和内核态Makefile简单模板</a></li>
+<p><img src="/images/xenstore_operation.png" alt="xenstore" title="xenstore operations" /></p>
 
-    
-        
-        
-        
-    
-    <li><span>Jul 17</span>» <a href="/linux/2015/07/17/install_systemtap_on_ubuntu14.04.html">在ubuntu14.04下安装systemtap</a></li>
-
-    
-        
-        
-        
-    
-    <li><span>Jul 16</span>» <a href="/test/2015/07/16/test.html">this is a test</a></li>
-
-    
-        
-        
-        
-    
-    <li><span>Apr 09</span>» <a href="/jekyll/2015/04/09/welcome-to-jekyll%20copy.html">Welcome to Jekyll!</a></li>
-
-</ul>
+  </article>
 </div>
 
       </div>
