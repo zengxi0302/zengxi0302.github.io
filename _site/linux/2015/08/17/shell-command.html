@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>    
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+
+  <title>常用的shell命令记录</title>
+  <meta name="description" content="find命令">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://zengxi0302.github.io/linux/2015/08/17/shell-command.html">
+  <link rel="alternate" type="application/atom+xml" title="zengxi0302's  blog" href="http://zengxi0302.github.io/feed.xml" />
+  <script src="/scripts/jquery-1.11.2.min.js"></script>
+  <script src="/scripts/pithy.js"></script>
+</head>
+
+
+  <body>
+    <header class="header">
+	<div class="header-container">
+		<div class="nav">
+			
+				<li>
+					<a href="/index.html">home</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/archive.html">archive</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/category.html">category</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/about.html">about</a>
+				</li>			
+			
+		</div>
+		<div class="description"> forgeting behind and looking foward! </div>		
+		<ul class="social-links">
+			<li>
+				<a href="https://github.com/zengxi0302" title="Github">
+					<img width="19px" height="19px" src="/images/github.png"/>
+				</a>
+			</li>
+			<li>
+				<a href="/feed.xml" title="RSS">
+					<img width="19px" height="19px" src="/images/rss.png"/>
+				</a>
+			</li>
+		</ul>		
+	</div>
+</header>
+
+    <br>
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+  <br>
+  <header class="post-header">
+    <h1 class="post-title">常用的shell命令记录</h1>
+    <p class="post-meta">Aug 17, 2015</p>
+  </header>
+
+  <article class="post-content">
+    <h2 id="find">find命令</h2>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">find / -name file		//根据name进行查找
+find / -iname file		//无关大小写
+find / -name <span class="s2">&quot;*.sh&quot;</span>			//通配符，正则表达式
+find / -name <span class="s2">&quot;[A-Z]*&quot;</span>		//以A-Z为开头的文件
+
+find / -size +5M				//根据size进行查找
+find / -size -5M
+find / -size +5M -a size -10M		//查找大于5M小于10M的文件, 条件and
+find / -size +5M -o -name file	//大于5M，或名称是file，条件or
+
+find / -atime -1				//查找1天没访问过的文件
+find / -atime +30				//查找30内都天没访问过的文件
+find / -amin -5 				//查找5分钟内访问过的文件
+							//其它的还有ctime, mtime, cmin, mmin，
+							//表示创建和修改时间，单位是天和分钟
+
+find / -user root				//查找属主是root的文件
+
+find / -type f 					//查找所有的文件 - <span class="o">(</span>f 文件<span class="p">;</span> d 目录<span class="p">;</span> p 管道<span class="p">;</span>
+
+<span class="c">#find常与xargs配合使用</span>
+find / -size +100M <span class="p">|</span> xargs rm	//查找大于100M的文件，并删除
+
+<span class="c">#也后跟exec跟命令执行</span>
+find / -type f -exec mv <span class="o">{}</span> tmp/ <span class="se">\;</span>	//将匹配的文件移动到tmp目录</code></pre></div>
+
+<h2 id="cut">cut命令</h2>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">cut -c -5 file			//取文件前5个字符
+cut -c 5- file			//取文件第五个字符后的所有字符
+cut -c 10-15 file		//取10-15个字符
+
+cut -d <span class="s2">&quot; &quot;</span> -f 1			//以<span class="s2">&quot; &quot;</span>为分割符，取field 1
+cut -d : -f 1,3-5,7		//以:为分割符，取1，3-5，第7个字段</code></pre></div>
+
+<h2 id="sed">sed命令</h2>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">sed -i <span class="s2">&quot;s/a/b/g&quot;</span> file	//将file中所有的a替换成b</code></pre></div>
+
+<h2 id="awk">awk命令</h2>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">echo</span> <span class="s2">&quot;1 2 3 4 5 &quot;</span> <span class="p">|</span> awk <span class="s1">&#39;{print $1}&#39;</span>	//取第一个字段</code></pre></div>
+
+
+  </article>
+</div>
+
+      </div>
+    </div>
+    
+    <footer class="footer">
+  <div id="gotop">^</div>
+  <br>
+	@2015 Pithy Theme by Pawpaw.
+</footer>
+
+    
+  </body>
+
+</html>
