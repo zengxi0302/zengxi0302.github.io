@@ -6,9 +6,25 @@
 </description>
     <link>http://zengxi0302.github.io/</link>
     <atom:link href="http://zengxi0302.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 16 Aug 2015 23:55:09 +0800</pubDate>
-    <lastBuildDate>Sun, 16 Aug 2015 23:55:09 +0800</lastBuildDate>
+    <pubDate>Mon, 17 Aug 2015 00:25:36 +0800</pubDate>
+    <lastBuildDate>Mon, 17 Aug 2015 00:25:36 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>一张图了解linux IO子系统</title>
+        <description>&lt;p&gt;来源:&lt;a href=&quot;http://www.ilinuxkernel.com/?p=1559&quot;&gt;www.ilinuxkernel.com&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/linux_io_stackv1.0.png&quot; alt=&quot;iostack&quot; title=&quot;iostack&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 17 Aug 2015 07:54:32 +0800</pubDate>
+        <link>http://zengxi0302.github.io/linux/2015/08/17/iostack.html</link>
+        <guid isPermaLink="true">http://zengxi0302.github.io/linux/2015/08/17/iostack.html</guid>
+        
+        
+        <category>linux</category>
+        
+      </item>
     
       <item>
         <title>常用的shell命令记录</title>
