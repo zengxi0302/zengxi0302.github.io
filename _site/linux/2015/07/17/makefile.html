@@ -70,29 +70,29 @@
   <article class="post-content">
     <p>用户态Makefile</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">SRCS</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="n">wildcard</span> <span class="o">*.</span><span class="n">c</span><span class="p">)</span>
-<span class="no">OBJS</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="ss">SRCS</span><span class="p">:</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="o">.</span><span class="n">o</span><span class="p">)</span>
-<span class="no">CC</span> <span class="o">=</span> <span class="n">gcc</span>
-<span class="no">INCLUDES</span> <span class="o">=</span> <span class="o">-</span><span class="n">I</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="kp">include</span>
-<span class="no">LIBS</span> <span class="o">=</span> <span class="o">-</span><span class="n">L</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span> <span class="o">-</span><span class="n">lpthread</span>
-<span class="no">CCFLAGS</span> <span class="o">=</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="no">Wall</span> <span class="o">-</span><span class="no">O0</span>
-<span class="n">main</span> <span class="p">:</span> <span class="err">$</span><span class="p">(</span><span class="no">OBJS</span><span class="p">)</span>
-        <span class="err">$</span><span class="p">(</span><span class="no">CC</span><span class="p">)</span> <span class="err">$</span><span class="o">^</span> <span class="o">-</span><span class="n">o</span> <span class="vg">$@</span> <span class="err">$</span><span class="p">(</span><span class="no">INCLUDES</span><span class="p">)</span> <span class="err">$</span><span class="p">(</span><span class="no">LIBS</span><span class="p">)</span> 
-<span class="sx">%.o : %.</span><span class="n">c</span>
-        <span class="err">$</span><span class="p">(</span><span class="no">CC</span><span class="p">)</span> <span class="o">-</span><span class="n">c</span> <span class="p">{</span><span class="mi">1</span><span class="p">}</span><span class="n">lt</span><span class="p">;;</span> <span class="err">$</span><span class="p">(</span><span class="no">CCFLAGS</span><span class="p">)</span> 
-<span class="ss">clean</span><span class="p">:</span>
-        <span class="o">-</span><span class="n">rm</span> <span class="o">*.</span><span class="n">o</span>
-        <span class="o">-</span><span class="n">rm</span> <span class="n">main</span></code></pre></div>
+<div class="highlight"><pre><code class="language-text" data-lang="text">SRCS = $(wildcard *.c)
+OBJS = $(SRCS:.c = .o)
+CC = gcc
+INCLUDES = -I/usr/include
+LIBS = -L/usr/lib -lpthread
+CCFLAGS = -g -Wall -O0
+main : $(OBJS)
+        $(CC) $^ -o $@ $(INCLUDES) $(LIBS) 
+%.o : %.c
+        $(CC) -c {1}lt;; $(CCFLAGS) 
+clean:
+        -rm *.o
+        -rm main</code></pre></div>
 
 <p>内核态Makefile</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">obj</span><span class="o">-</span><span class="n">m</span> <span class="p">:</span><span class="o">=</span> <span class="n">delay_workqueue</span><span class="o">.</span><span class="n">o</span>
+<div class="highlight"><pre><code class="language-text" data-lang="text">obj-m := delay_workqueue.o
 
-<span class="no">PWD</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="n">shell</span> <span class="n">pwd</span><span class="p">)</span>
-<span class="no">KERNELDIR</span> <span class="o">=</span> <span class="sr">/lib/mo</span><span class="n">dules</span><span class="o">/</span><span class="err">$</span><span class="p">(</span><span class="n">shell</span> <span class="n">uname</span> <span class="o">-</span><span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="n">build</span>
+PWD = $(shell pwd)
+KERNELDIR = /lib/modules/$(shell uname -r)/build
 
-<span class="ss">default</span><span class="p">:</span> 
-    <span class="err">$</span><span class="p">(</span><span class="no">MAKE</span><span class="p">)</span> <span class="o">-</span><span class="n">C</span> <span class="err">$</span><span class="p">(</span><span class="no">KERNELDIR</span><span class="p">)</span> <span class="n">M</span><span class="o">=</span><span class="err">$</span><span class="p">(</span><span class="no">PWD</span><span class="p">)</span> <span class="n">modules</span></code></pre></div>
+default: 
+    $(MAKE) -C $(KERNELDIR) M=$(PWD) modules</code></pre></div>
 
 
   </article>

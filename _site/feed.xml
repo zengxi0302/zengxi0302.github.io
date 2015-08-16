@@ -6,9 +6,283 @@
 </description>
     <link>http://zengxi0302.github.io/</link>
     <atom:link href="http://zengxi0302.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 17 Jul 2015 23:46:05 +0800</pubDate>
-    <lastBuildDate>Fri, 17 Jul 2015 23:46:05 +0800</lastBuildDate>
+    <pubDate>Sun, 16 Aug 2015 20:11:16 +0800</pubDate>
+    <lastBuildDate>Sun, 16 Aug 2015 20:11:16 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Markdown常用语法标记</title>
+        <description>&lt;p&gt;本文的markdown标签针对ruby实现的kramdown解释器&lt;/p&gt;
+
+&lt;h1 id=&quot;ruby&quot;&gt;ruby代码段&lt;/h1&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;nb&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;hello github.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints &amp;#39;hello github.&amp;#39; to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;c&quot;&gt;c代码段&lt;/h1&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;hello&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;shell&quot;&gt;shell片段&lt;/h1&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;ls &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;read &lt;/span&gt;line&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$line&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;section&quot;&gt;标题示例&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;h1-&quot;&gt;H1 &lt;code&gt;#&lt;/code&gt;&lt;/h1&gt;
+
+&lt;h2 id=&quot;h2-&quot;&gt;H2 &lt;code&gt;##&lt;/code&gt;&lt;/h2&gt;
+
+&lt;h3 id=&quot;h3-&quot;&gt;H3 &lt;code&gt;###&lt;/code&gt;&lt;/h3&gt;
+
+&lt;h4 id=&quot;h4-&quot;&gt;H4 &lt;code&gt;####&lt;/code&gt;&lt;/h4&gt;
+
+&lt;h5 id=&quot;h5-&quot;&gt;H5 &lt;code&gt;#####&lt;/code&gt;&lt;/h5&gt;
+
+&lt;h6 id=&quot;h6-&quot;&gt;H6 &lt;code&gt;######&lt;/code&gt;&lt;/h6&gt;
+
+&lt;h1 id=&quot;section-1&quot;&gt;强调&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;em&gt;强调1-1&lt;/em&gt; //用&lt;code&gt;*&lt;/code&gt;表示斜体&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;强调1-2&lt;/em&gt; //用&lt;code&gt;_&lt;/code&gt;也可以&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;强调2-1&lt;/strong&gt; //用&lt;code&gt;**&lt;/code&gt;表示粗体&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;强调2-2&lt;/strong&gt; //用&lt;code&gt;__&lt;/code&gt;也可以&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;强调3-1&lt;/em&gt;&lt;/strong&gt; //用&lt;code&gt;***&lt;/code&gt;表示斜粗体&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;强调3-2&lt;/em&gt;&lt;/strong&gt; //用&lt;code&gt;___&lt;/code&gt;也可以&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;**这是什么&lt;/strong&gt;** //四个&lt;code&gt;*&lt;/code&gt;会被重新翻译，就不用了&lt;/p&gt;
+
+&lt;h1 id=&quot;section-2&quot;&gt;列表&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;颜色&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;红&lt;/p&gt;
+
+    &lt;p&gt;a. 朱红&lt;/p&gt;
+
+    &lt;p&gt;b. 酒红&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;黄&lt;/p&gt;
+    &lt;ol&gt;
+      &lt;li&gt;
+        &lt;p&gt;深黄&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;淡黄&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;section-3&quot;&gt;引用&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;这是一段引用,用&lt;code&gt;&amp;gt;&lt;/code&gt;表示&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&quot;section-4&quot;&gt;字体颜色&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;em style=&quot;color:red&quot;&gt;红色&lt;/em&gt;. &lt;code&gt;*红色*{:style=&quot;color:red&quot;}&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em style=&quot;color:green&quot;&gt;绿色&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em style=&quot;color:yellow&quot;&gt;黄色&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;section-5&quot;&gt;链接&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.google.com&quot;&gt;www.google.com&lt;/a&gt;  &lt;code&gt;[www.google.com](https://www.google.com)&lt;/code&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;section-6&quot;&gt;图片&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;img src=&quot;/images/github.png&quot; alt=&quot;github&quot; title=&quot;github&quot; /&gt;  &lt;code&gt;![github](/images/github.png &quot;github&quot;)&lt;/code&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;section-7&quot;&gt;表格&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;head1&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;head2&lt;/th&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;head3&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;a&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;b&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;c&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;sample2&quot;&gt;sample2&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Markdown&lt;/th&gt;
+      &lt;th&gt;Less&lt;/th&gt;
+      &lt;th&gt;Pretty&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;em&gt;Still&lt;/em&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code&gt;renders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;nicely&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+        <pubDate>Wed, 22 Jul 2015 15:30:00 +0800</pubDate>
+        <link>http://zengxi0302.github.io/%E5%86%99%E4%BD%9C/2015/07/22/markdown-syntax.html</link>
+        <guid isPermaLink="true">http://zengxi0302.github.io/%E5%86%99%E4%BD%9C/2015/07/22/markdown-syntax.html</guid>
+        
+        
+        <category>写作</category>
+        
+      </item>
+    
+      <item>
+        <title>IO路径解析</title>
+        <description>&lt;p&gt;首先，得看发出了哪些系统调用， strace出场&lt;/p&gt;
+
+&lt;p&gt;我们关心的两个系统调用是open和write&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;open(&amp;quot;/mnt/sdb/zengxi/iopath/hello_file&amp;quot; O_WRONLY|O_CREAT 03777701360411750) = 3	//返回值是fd的值
+write(3 &amp;quot;hello world!\n&amp;quot; 13)          = 13	//返回值是write系统调用写buf的长度&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;然后，我们一起看看在内核里面做了什么事情&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;a.out(3594) close: args: 255
+a.out(3594) vfs_read parms: file=0xffff880005edc2c0 buf=0xffff880052c4c800 count=0x188 pos=0xffff88005e6e9c68
+a.out(3594) open: args: &amp;quot;/etc/ld.so.cache&amp;quot; O_RDONLY
+a.out(3594) vfs_fstat parms: fd=0x3 stat=0xffff88005e6e9ef8
+a.out(3594) vfs_getattr parms: mnt=0xffff8801b888e180 dentry=0xffff8800137e0a20 stat=0xffff88005e6e9ef8
+a.out(3594) close: args: 3
+a.out(3594) open: args: &amp;quot;/lib64/libc.so.6&amp;quot; O_RDONLY
+a.out(3594) read: args: 3 0x7ffcd5fa2b78 832
+a.out(3594) vfs_read parms: file=0xffff8801b1c39bc0 buf=0x7ffcd5fa2b78 count=0x340 pos=0xffff88005e6e9f50
+a.out(3594) vfs_fstat parms: fd=0x3 stat=0xffff88005e6e9ef8
+a.out(3594) vfs_getattr parms: mnt=0xffff8801b888e180 dentry=0xffff8801b84ee3a0 stat=0xffff88005e6e9ef8
+a.out(3594) close: args: 3
+a.out(3594) open: args: &amp;quot;/mnt/sdb/zengxi/iopath/hello_file&amp;quot; O_WRONLY|O_CREAT 01777777777772576431770
+a.out(3594) vfs_fstat parms: fd=0x1 stat=0xffff88005e6e9ef8
+a.out(3594) vfs_getattr parms: mnt=0xffff8801b888e280 dentry=0xffff8801a8948250 stat=0xffff88005e6e9ef8
+a.out(3594) write: args: 1 &amp;quot;the address of msg: 0x7ffcd5fa32f0 sizeof ms&amp;quot;... 51
+a.out(3594) vfs_write parms: file=0xffff8801b5733580 buf=0x7f9ad453f000 count=0x33 pos=0xffff88005e6e9f50
+a.out(3594) vfs_fstat parms: fd=0x0 stat=0xffff88005e6e9ef8
+a.out(3594) vfs_getattr parms: mnt=0xffff8801b888e280 dentry=0xffff8801a8948250 stat=0xffff88005e6e9ef8
+a.out(3594) read: args: 0 0x7f9ad453e000 1024
+a.out(3594) vfs_read parms: file=0xffff8801b5733580 buf=0x7f9ad453e000 count=0x400 pos=0xffff88005e6e9f50&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;hello world已经被写入到Page Cache当中&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;============================================================================================================================================
+vfs_write
+	generic_file_aio_write
+		generic_file_direct_write	//direct写
+		generic_file_buffered_write	//buffer写
+			generic_perform_write
+				write_begin (address_space_operations-&amp;gt;write_begin) //依据具体的文件系统定义的write_begin和write_end
+					iov_iter_copy_from_user_atomic //从用户空间将buf拷贝到内核空间，相当于进入page cache					
+				write_end (address_space_operations-&amp;gt;write_end)
+				
+			ext2/ext3/ext4
+	File.c (fs\ext2):	.aio_write	= generic_file_aio_write
+	File.c (fs\ext3):	.aio_write	= generic_file_aio_write
+	File.c (fs\ext4):	.aio_write	= ext4_file_write
+	
+ocfs2
+	File.c (fs\ocfs2):	.aio_write	= ocfs2_file_aio_write
+============================================================================================================================================&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;fluser进程刷写脏页&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;============================================================================================================================================
+bdi_forker_thread
+	task = kthread_create(bdi_writeback_thread &amp;amp;bdi-&amp;gt;wb &amp;quot;flush-%s&amp;quot; dev_name(bdi-&amp;gt;dev)); //backing-dev.c，创建针对块设备的flush进程
+
+bdi_writeback_thread
+	wb_do_writeback
+		wb_writeback
+			__writeback_inodes_sb //if （work-&amp;gt;sb）
+			writeback_inodes_wb
+				wb_inode 		//获取要回写的inode
+				writeback_sb_inodes	//回写属于这个superblock的所有inode
+					writeback_single_inode	//分解写单个inode
+						do_writepages
+							mapping-&amp;gt;a_ops-&amp;gt;writepages	//如果文件系统自定义了writepages的方法，调用之
+							generic_writepages		//否则，使用通用的writepages方法
+								__writepage
+									mapping-&amp;gt;a_ops-&amp;gt;writepage	//调用文件系统自定义的写单个页面的方法，必需实现
+============================================================================================================================================&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;回到具体文件系统中，将page内容封装成块层需要的buffer_head和bio，向下提交&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;ext2/ext3/ext4
+	Inode.c (fs\ext2):	.writepage		= ext2_writepage
+	Inode.c (fs\ext3):	.writepage		= ext3_writeback_writepage
+	Inode.c (fs\ext4):	.writepage		= ext4_writepage	
+ocfs2
+	Aops.c (fs\ocfs2):	.writepage		= ocfs2_writepage
+============================================================================================================================================
+ext3_writeback_writepage
+	block_write_full_page	//提交整个page
+		block_write_full_page_endio //并注册io完成的回调函数是end_buffer_async_write
+			__block_write_full_page
+				mark_buffer_async_write_endio		//将page中所有的buffer_head的设置io返回回调函数（因为一个page当中可能包含多个io，每个io都需要设置end_io函数）
+				submit_bh				//遍历page中的所有buffer_head，调用submit_bh提交
+					_submit_bh			
+						submit_bio		//提交到块层
+============================================================================================================================================&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;经submit_bio后，io进入到块层
+进入块层之后，文件的概念就彻底消失了，只有块，准确的说是扇区。
+为什么要设置块层，主要的目的是 – IO调度 (noop deadline cfq)所在的位置&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;============================================================================================================================================
+submit_bio
+	generic_make_request	//将io请求封装成request
+		__generic_make_request
+			q = bdev_get_queue(bio-&amp;gt;bi_bdev);	//获取到这个设备的请求队列(request_queue)
+			ret = q-&amp;gt;make_request_fn(q bio);	//调用make_request_fn出队列
+============================================================================================================================================&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Sun, 19 Jul 2015 08:04:10 +0800</pubDate>
+        <link>http://zengxi0302.github.io/linux/2015/07/19/iopath.html</link>
+        <guid isPermaLink="true">http://zengxi0302.github.io/linux/2015/07/19/iopath.html</guid>
+        
+        
+        <category>linux</category>
+        
+      </item>
     
       <item>
         <title>xenstore操作方法</title>
@@ -31,29 +305,29 @@ Xen提供了多种接口用来操作XenStore：命令行的xenstore命令、用�
         <title>用户态和内核态Makefile简单模板</title>
         <description>&lt;p&gt;用户态Makefile&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;no&quot;&gt;SRCS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wildcard&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;no&quot;&gt;OBJS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;SRCS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;no&quot;&gt;CC&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gcc&lt;/span&gt;
-&lt;span class=&quot;no&quot;&gt;INCLUDES&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;I&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;usr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;include&lt;/span&gt;
-&lt;span class=&quot;no&quot;&gt;LIBS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;usr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lpthread&lt;/span&gt;
-&lt;span class=&quot;no&quot;&gt;CCFLAGS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Wall&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;O0&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;OBJS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;CC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;o&lt;/span&gt; &lt;span class=&quot;vg&quot;&gt;$@&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;INCLUDES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;LIBS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
-&lt;span class=&quot;sx&quot;&gt;%.o : %.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;
-        &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;CC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;;&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;CCFLAGS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
-&lt;span class=&quot;ss&quot;&gt;clean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;o&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;SRCS = $(wildcard *.c)
+OBJS = $(SRCS:.c = .o)
+CC = gcc
+INCLUDES = -I/usr/include
+LIBS = -L/usr/lib -lpthread
+CCFLAGS = -g -Wall -O0
+main : $(OBJS)
+        $(CC) $^ -o $@ $(INCLUDES) $(LIBS) 
+%.o : %.c
+        $(CC) -c {1}lt;; $(CCFLAGS) 
+clean:
+        -rm *.o
+        -rm main&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;内核态Makefile&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;obj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;delay_workqueue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;o&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;obj-m := delay_workqueue.o
 
-&lt;span class=&quot;no&quot;&gt;PWD&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shell&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;no&quot;&gt;KERNELDIR&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;/lib/mo&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dules&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shell&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uname&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;build&lt;/span&gt;
+PWD = $(shell pwd)
+KERNELDIR = /lib/modules/$(shell uname -r)/build
 
-&lt;span class=&quot;ss&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; 
-    &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;MAKE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;C&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;KERNELDIR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;PWD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;modules&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+default: 
+    $(MAKE) -C $(KERNELDIR) M=$(PWD) modules&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 </description>
         <pubDate>Fri, 17 Jul 2015 08:18:32 +0800</pubDate>

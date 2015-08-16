@@ -7,7 +7,7 @@ categories: linux
 
 用户态Makefile
 
-{% highlight ruby %}
+{% highlight text %}
 
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c = .o)
@@ -27,7 +27,7 @@ clean:
 
 内核态Makefile
 
-{% highlight ruby %}
+{% highlight text %}
 
 obj-m := delay_workqueue.o
 

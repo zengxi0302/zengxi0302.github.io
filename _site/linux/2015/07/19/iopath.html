@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>    
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+
+  <title>IO路径解析</title>
+  <meta name="description" content="首先，得看发出了哪些系统调用， strace出场">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://zengxi0302.github.io/linux/2015/07/19/iopath.html">
+  <link rel="alternate" type="application/atom+xml" title="zengxi0302's  blog" href="http://zengxi0302.github.io/feed.xml" />
+  <script src="/scripts/jquery-1.11.2.min.js"></script>
+  <script src="/scripts/pithy.js"></script>
+</head>
+
+
+  <body>
+    <header class="header">
+	<div class="header-container">
+		<div class="nav">
+			
+				<li>
+					<a href="/index.html">home</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/archive.html">archive</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/category.html">category</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/about.html">about</a>
+				</li>			
+			
+		</div>
+		<div class="description"> forgeting behind and looking foward! </div>		
+		<ul class="social-links">
+			<li>
+				<a href="https://github.com/zengxi0302" title="Github">
+					<img width="19px" height="19px" src="/images/github.png"/>
+				</a>
+			</li>
+			<li>
+				<a href="/feed.xml" title="RSS">
+					<img width="19px" height="19px" src="/images/rss.png"/>
+				</a>
+			</li>
+		</ul>		
+	</div>
+</header>
+
+    <br>
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+  <br>
+  <header class="post-header">
+    <h1 class="post-title">IO路径解析</h1>
+    <p class="post-meta">Jul 19, 2015</p>
+  </header>
+
+  <article class="post-content">
+    <p>首先，得看发出了哪些系统调用， strace出场</p>
+
+<p>我们关心的两个系统调用是open和write</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">open(&quot;/mnt/sdb/zengxi/iopath/hello_file&quot; O_WRONLY|O_CREAT 03777701360411750) = 3	//返回值是fd的值
+write(3 &quot;hello world!\n&quot; 13)          = 13	//返回值是write系统调用写buf的长度</code></pre></div>
+
+<p>然后，我们一起看看在内核里面做了什么事情</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">a.out(3594) close: args: 255
+a.out(3594) vfs_read parms: file=0xffff880005edc2c0 buf=0xffff880052c4c800 count=0x188 pos=0xffff88005e6e9c68
+a.out(3594) open: args: &quot;/etc/ld.so.cache&quot; O_RDONLY
+a.out(3594) vfs_fstat parms: fd=0x3 stat=0xffff88005e6e9ef8
+a.out(3594) vfs_getattr parms: mnt=0xffff8801b888e180 dentry=0xffff8800137e0a20 stat=0xffff88005e6e9ef8
+a.out(3594) close: args: 3
+a.out(3594) open: args: &quot;/lib64/libc.so.6&quot; O_RDONLY
+a.out(3594) read: args: 3 0x7ffcd5fa2b78 832
+a.out(3594) vfs_read parms: file=0xffff8801b1c39bc0 buf=0x7ffcd5fa2b78 count=0x340 pos=0xffff88005e6e9f50
+a.out(3594) vfs_fstat parms: fd=0x3 stat=0xffff88005e6e9ef8
+a.out(3594) vfs_getattr parms: mnt=0xffff8801b888e180 dentry=0xffff8801b84ee3a0 stat=0xffff88005e6e9ef8
+a.out(3594) close: args: 3
+a.out(3594) open: args: &quot;/mnt/sdb/zengxi/iopath/hello_file&quot; O_WRONLY|O_CREAT 01777777777772576431770
+a.out(3594) vfs_fstat parms: fd=0x1 stat=0xffff88005e6e9ef8
+a.out(3594) vfs_getattr parms: mnt=0xffff8801b888e280 dentry=0xffff8801a8948250 stat=0xffff88005e6e9ef8
+a.out(3594) write: args: 1 &quot;the address of msg: 0x7ffcd5fa32f0 sizeof ms&quot;... 51
+a.out(3594) vfs_write parms: file=0xffff8801b5733580 buf=0x7f9ad453f000 count=0x33 pos=0xffff88005e6e9f50
+a.out(3594) vfs_fstat parms: fd=0x0 stat=0xffff88005e6e9ef8
+a.out(3594) vfs_getattr parms: mnt=0xffff8801b888e280 dentry=0xffff8801a8948250 stat=0xffff88005e6e9ef8
+a.out(3594) read: args: 0 0x7f9ad453e000 1024
+a.out(3594) vfs_read parms: file=0xffff8801b5733580 buf=0x7f9ad453e000 count=0x400 pos=0xffff88005e6e9f50</code></pre></div>
+
+<p>hello world已经被写入到Page Cache当中</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">============================================================================================================================================
+vfs_write
+	generic_file_aio_write
+		generic_file_direct_write	//direct写
+		generic_file_buffered_write	//buffer写
+			generic_perform_write
+				write_begin (address_space_operations-&gt;write_begin) //依据具体的文件系统定义的write_begin和write_end
+					iov_iter_copy_from_user_atomic //从用户空间将buf拷贝到内核空间，相当于进入page cache					
+				write_end (address_space_operations-&gt;write_end)
+				
+			ext2/ext3/ext4
+	File.c (fs\ext2):	.aio_write	= generic_file_aio_write
+	File.c (fs\ext3):	.aio_write	= generic_file_aio_write
+	File.c (fs\ext4):	.aio_write	= ext4_file_write
+	
+ocfs2
+	File.c (fs\ocfs2):	.aio_write	= ocfs2_file_aio_write
+============================================================================================================================================</code></pre></div>
+
+<p>fluser进程刷写脏页</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">============================================================================================================================================
+bdi_forker_thread
+	task = kthread_create(bdi_writeback_thread &amp;bdi-&gt;wb &quot;flush-%s&quot; dev_name(bdi-&gt;dev)); //backing-dev.c，创建针对块设备的flush进程
+
+bdi_writeback_thread
+	wb_do_writeback
+		wb_writeback
+			__writeback_inodes_sb //if （work-&gt;sb）
+			writeback_inodes_wb
+				wb_inode 		//获取要回写的inode
+				writeback_sb_inodes	//回写属于这个superblock的所有inode
+					writeback_single_inode	//分解写单个inode
+						do_writepages
+							mapping-&gt;a_ops-&gt;writepages	//如果文件系统自定义了writepages的方法，调用之
+							generic_writepages		//否则，使用通用的writepages方法
+								__writepage
+									mapping-&gt;a_ops-&gt;writepage	//调用文件系统自定义的写单个页面的方法，必需实现
+============================================================================================================================================</code></pre></div>
+
+<p>回到具体文件系统中，将page内容封装成块层需要的buffer_head和bio，向下提交</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">ext2/ext3/ext4
+	Inode.c (fs\ext2):	.writepage		= ext2_writepage
+	Inode.c (fs\ext3):	.writepage		= ext3_writeback_writepage
+	Inode.c (fs\ext4):	.writepage		= ext4_writepage	
+ocfs2
+	Aops.c (fs\ocfs2):	.writepage		= ocfs2_writepage
+============================================================================================================================================
+ext3_writeback_writepage
+	block_write_full_page	//提交整个page
+		block_write_full_page_endio //并注册io完成的回调函数是end_buffer_async_write
+			__block_write_full_page
+				mark_buffer_async_write_endio		//将page中所有的buffer_head的设置io返回回调函数（因为一个page当中可能包含多个io，每个io都需要设置end_io函数）
+				submit_bh				//遍历page中的所有buffer_head，调用submit_bh提交
+					_submit_bh			
+						submit_bio		//提交到块层
+============================================================================================================================================</code></pre></div>
+
+<p>经submit_bio后，io进入到块层
+进入块层之后，文件的概念就彻底消失了，只有块，准确的说是扇区。
+为什么要设置块层，主要的目的是 – IO调度 (noop deadline cfq)所在的位置</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">============================================================================================================================================
+submit_bio
+	generic_make_request	//将io请求封装成request
+		__generic_make_request
+			q = bdev_get_queue(bio-&gt;bi_bdev);	//获取到这个设备的请求队列(request_queue)
+			ret = q-&gt;make_request_fn(q bio);	//调用make_request_fn出队列
+============================================================================================================================================</code></pre></div>
+
+
+  </article>
+</div>
+
+      </div>
+    </div>
+    
+    <footer class="footer">
+  <div id="gotop">^</div>
+  <br>
+	@2015 Pithy Theme by Pawpaw.
+</footer>
+
+    
+  </body>
+
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>    
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+
+  <title>Markdown常用语法标记</title>
+  <meta name="description" content="本文的markdown标签针对ruby实现的kramdown解释器">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://zengxi0302.github.io/%E5%86%99%E4%BD%9C/2015/07/22/markdown-syntax.html">
+  <link rel="alternate" type="application/atom+xml" title="zengxi0302's  blog" href="http://zengxi0302.github.io/feed.xml" />
+  <script src="/scripts/jquery-1.11.2.min.js"></script>
+  <script src="/scripts/pithy.js"></script>
+</head>
+
+
+  <body>
+    <header class="header">
+	<div class="header-container">
+		<div class="nav">
+			
+				<li>
+					<a href="/index.html">home</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/archive.html">archive</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/category.html">category</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/about.html">about</a>
+				</li>			
+			
+		</div>
+		<div class="description"> forgeting behind and looking foward! </div>		
+		<ul class="social-links">
+			<li>
+				<a href="https://github.com/zengxi0302" title="Github">
+					<img width="19px" height="19px" src="/images/github.png"/>
+				</a>
+			</li>
+			<li>
+				<a href="/feed.xml" title="RSS">
+					<img width="19px" height="19px" src="/images/rss.png"/>
+				</a>
+			</li>
+		</ul>		
+	</div>
+</header>
+
+    <br>
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+  <br>
+  <header class="post-header">
+    <h1 class="post-title">Markdown常用语法标记</h1>
+    <p class="post-meta">Jul 22, 2015</p>
+  </header>
+
+  <article class="post-content">
+    <p>本文的markdown标签针对ruby实现的kramdown解释器</p>
+
+<h1 id="ruby">ruby代码段</h1>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">int</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="nb">printf</span><span class="p">(</span><span class="s2">&quot;hello github.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">#=&gt; prints &#39;hello github.&#39; to STDOUT.</span></code></pre></div>
+
+<h1 id="c">c代码段</h1>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="cp">#include &lt;stdio.h&gt;</span>
+    <span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+
+<h1 id="shell">shell片段</h1>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">ls <span class="p">|</span> <span class="k">while</span> <span class="nb">read </span>line<span class="p">;</span> <span class="k">done</span> <span class="nb">echo</span> <span class="nv">$line</span><span class="p">;</span> <span class="k">done</span></code></pre></div>
+
+<h1 id="section">标题示例</h1>
+<hr />
+
+<h1 id="h1-">H1 <code>#</code></h1>
+
+<h2 id="h2-">H2 <code>##</code></h2>
+
+<h3 id="h3-">H3 <code>###</code></h3>
+
+<h4 id="h4-">H4 <code>####</code></h4>
+
+<h5 id="h5-">H5 <code>#####</code></h5>
+
+<h6 id="h6-">H6 <code>######</code></h6>
+
+<h1 id="section-1">强调</h1>
+<hr />
+
+<p><em>强调1-1</em> //用<code>*</code>表示斜体</p>
+
+<p><em>强调1-2</em> //用<code>_</code>也可以</p>
+
+<p><strong>强调2-1</strong> //用<code>**</code>表示粗体</p>
+
+<p><strong>强调2-2</strong> //用<code>__</code>也可以</p>
+
+<p><strong><em>强调3-1</em></strong> //用<code>***</code>表示斜粗体</p>
+
+<p><strong><em>强调3-2</em></strong> //用<code>___</code>也可以</p>
+
+<p><strong>**这是什么</strong>** //四个<code>*</code>会被重新翻译，就不用了</p>
+
+<h1 id="section-2">列表</h1>
+<hr />
+
+<p>颜色</p>
+
+<ul>
+  <li>
+    <p>红</p>
+
+    <p>a. 朱红</p>
+
+    <p>b. 酒红</p>
+  </li>
+  <li>
+    <p>黄</p>
+    <ol>
+      <li>
+        <p>深黄</p>
+      </li>
+      <li>
+        <p>淡黄</p>
+      </li>
+    </ol>
+  </li>
+</ul>
+
+<h1 id="section-3">引用</h1>
+<hr />
+
+<blockquote>
+  <p>这是一段引用,用<code>&gt;</code>表示</p>
+</blockquote>
+
+<h1 id="section-4">字体颜色</h1>
+<hr />
+
+<p><em style="color:red">红色</em>. <code>*红色*{:style="color:red"}</code></p>
+
+<p><em style="color:green">绿色</em>.</p>
+
+<p><em style="color:yellow">黄色</em>.</p>
+
+<h1 id="section-5">链接</h1>
+<hr />
+<p><a href="https://www.google.com">www.google.com</a>  <code>[www.google.com](https://www.google.com)</code></p>
+
+<h1 id="section-6">图片</h1>
+<hr />
+<p><img src="/images/github.png" alt="github" title="github" />  <code>![github](/images/github.png "github")</code></p>
+
+<h1 id="section-7">表格</h1>
+<hr />
+
+<table>
+  <thead>
+    <tr>
+      <th>head1</th>
+      <th style="text-align: left">head2</th>
+      <th style="text-align: left">head3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>a</td>
+      <td style="text-align: left">b</td>
+      <td style="text-align: left">c</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="sample2">sample2</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Markdown</th>
+      <th>Less</th>
+      <th>Pretty</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Still</em></td>
+      <td><code>renders</code></td>
+      <td><strong>nicely</strong></td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+
+  </article>
+</div>
+
+      </div>
+    </div>
+    
+    <footer class="footer">
+  <div id="gotop">^</div>
+  <br>
+	@2015 Pithy Theme by Pawpaw.
+</footer>
+
+    
+  </body>
+
+</html>
