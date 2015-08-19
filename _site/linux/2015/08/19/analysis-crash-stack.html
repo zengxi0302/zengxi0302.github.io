@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>    
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+
+  <title>crash手工解析栈方法</title>
+  <meta name="description" content="引言">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://zengxi0302.github.io/linux/2015/08/19/analysis-crash-stack.html">
+  <link rel="alternate" type="application/atom+xml" title="zengxi0302's  blog" href="http://zengxi0302.github.io/feed.xml" />
+  <script src="/scripts/jquery-1.11.2.min.js"></script>
+  <script src="/scripts/pithy.js"></script>
+</head>
+
+
+  <body>
+    <header class="header">
+	<div class="header-container">
+		<div class="nav">
+			
+				<li>
+					<a href="/index.html">home</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/archive.html">archive</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/category.html">category</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/about.html">about</a>
+				</li>			
+			
+		</div>
+		<div class="description"> forgeting behind and looking foward! </div>		
+		<ul class="social-links">
+			<li>
+				<a href="https://github.com/zengxi0302" title="Github">
+					<img width="19px" height="19px" src="/images/github.png"/>
+				</a>
+			</li>
+			<li>
+				<a href="/feed.xml" title="RSS">
+					<img width="19px" height="19px" src="/images/rss.png"/>
+				</a>
+			</li>
+		</ul>		
+	</div>
+</header>
+
+    <br>
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+  <br>
+  <header class="post-header">
+    <h1 class="post-title">crash手工解析栈方法</h1>
+    <p class="post-meta">Aug 19, 2015</p>
+  </header>
+
+  <article class="post-content">
+    <h1 id="section">引言</h1>
+<hr />
+
+<p>在处理主机重启的问题时，我们关心的入参或运行时变量值大多可以通过寄存器记录的数据获取。
+但是，有时候有些我们关心的数据不一定就直接存在在寄存器，又或栈顶被破坏了，bt无法解析堆栈。
+此时，我们就需要尝试通过手动解析栈的方式获得我们感兴趣的数据。</p>
+
+<h1 id="section-1">一个例子</h1>
+<hr />
+
+<p>下面，以echo c &gt; /proc/sysrq-trigger触发crash的例子说明如何手工解栈。</p>
+
+<p>bt解析的调用栈如下。</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">crash&gt; bt
+PID: 10109  TASK: ffff8801b80ee440  CPU: 0   COMMAND: &quot;bash&quot;
+ #0 [ffff8801b283db30] crash_kexec at ffffffff8008d88a
+ #1 [ffff8801b283dc00] oops_end at ffffffff8040edc8
+ #2 [ffff8801b283dc20] __bad_area_nosemaphore at ffffffff8001e67d
+ #3 [ffff8801b283dce0] do_page_fault at ffffffff80411b94
+ #4 [ffff8801b283dde0] page_fault at ffffffff8040e0d8
+    [exception RIP: sysrq_handle_crash+13]
+    RIP: ffffffff802c43fd  RSP: ffff8801b283de90  RFLAGS: 00010096
+    RAX: 0000000000000010  RBX: ffffffff807188c0  RCX: 0000000000000010
+    RDX: 0000000000000000  RSI: 00000000cc95cc95  RDI: 0000000000000063
+    RBP: 0000000000000063   R8: ffffffff808e779d   R9: 0000000000000056
+    R10: 0000000000000056  R11: 0000000000000046  R12: 0000000000000000
+    R13: 0000000000000003  R14: 0000000000000000  R15: 0000000000000002
+    ORIG_RAX: ffffffffffffffff  CS: 10000e030  SS: e02b
+ #5 [ffff8801b283de90] __handle_sysrq at ffffffff802c4b5d
+ #6 [ffff8801b283dec0] write_sysrq_trigger at ffffffff802c4be8
+ #7 [ffff8801b283ded0] proc_reg_write at ffffffff8018e882
+ #8 [ffff8801b283df10] vfs_write at ffffffff8012d4ce
+ #9 [ffff8801b283df40] sys_write at ffffffff8012d643
+#10 [ffff8801b283df80] system_call_fastpath at ffffffff80415cc3
+    RIP: 00007fe37bea9be0  RSP: 00007ffd65fc3958  RFLAGS: 00000246
+    RAX: 0000000000000001  RBX: ffffffff80415cc3  RCX: 0000000000000001
+    RDX: 0000000000000002  RSI: 00007fe37c646000  RDI: 0000000000000001
+    RBP: 0000000000000002   R8: 00007fe37c7ad700   R9: 0000000000000020
+    R10: 00007fe37c150e30  R11: 0000000000000246  R12: 00007fe37c14f7c0
+    R13: 00007fe37c646000  R14: 0000000000000002  R15: 00000000006b4430
+    ORIG_RAX: 0000000000000001  CS: e033  SS: e02b</code></pre></div>
+
+<h1 id="section-2">问题</h1>
+<hr />
+
+<p>假设，我们并不知道这是通过echo c &gt; /proc/sysrq-trigger造成的crash。单纯的从堆栈来看，只能看出来是在调sys_write写一个文件时触发的主机重启。那么，</p>
+
+<p><strong><em>问题是：</em></strong></p>
+
+<p>写哪一个文件时触发的主机重启？
+显然sysrq_handle_crash显示的寄存器内容并没有提供这样的信息。</p>
+
+<p><strong><em>思路是：</em></strong></p>
+
+<p>vfs_write肯定有一个打开要写的file对象，而file里的dentry字段会保存有文件名。虽然调用栈#8 vfs_write并提供寄存器信息，但是栈上可能会有我们需要的file对象地址，因此需要手工解析栈。</p>
+
+<h1 id="step1-">Step1 打出栈内容</h1>
+<hr />
+
+<p>利用bt -f打印出每个桢的栈内容，截取其中部分。</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#7 [ffff8801b283ded0] proc_reg_write at ffffffff8018e882</span>
+    ffff8801b283ded8: 00007fe37c646000 0000000000000002
+    ffff8801b283dee8: ffff8801b7a5c5c0 ffff8801b283df50
+    ffff8801b283def8: 00007fe37c646000 00007ffd65fc3a20
+    ffff8801b283df08: <span class="m">0000000000000000</span> <span class="s2">&quot;ffffffff8012d4ce &lt;- vfs_write里调用proc_reg_write返回</span>
+<span class="s2">后要执行的下一条指令。因为调用回来要知道从哪里继续执行，所以会压栈&quot;</span>
+ <span class="m">8</span> <span class="o">[</span>ffff8801b283df10<span class="o">]</span> vfs_write at ffffffff8012d4ce
+    ffff8801b283df18: ffff8801b518a080 ffff8801b7a5c5c0
+    ffff8801b283df28: fffffffffffffff7 0000000000000002
+    ffff8801b283df38: 00007fe37c646000 <span class="s2">&quot;ffffffff8012d643 &lt;- 同上，这是sys_write调用vfs_write</span>
+<span class="s2">返回后将要执行的下一条指令。&quot;</span>
+ <span class="m">9</span> <span class="o">[</span>ffff8801b283df40<span class="o">]</span> sys_write at ffffffff8012d643
+    ffff8801b283df48: 00000000006b4430 0000000000000000
+    ffff8801b283df58: 00000000006b4430 0000000000000002
+    ffff8801b283df68: 00007fe37c646000 00007fe37c14f7c0
+    ffff8801b283df78: <span class="m">0000000000000002</span> ffffffff80415cc3
+<span class="c">#10 [ffff8801b283df80] system_call_fastpath at ffffffff80415cc3</span></code></pre></div>
+
+<p>vfs_write函数从进入，到执行到vfs_write再往下调用的最后一条指令<em style="color:red">ffffffff8012d4ce</em>，栈中内容分别是</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">#8 [ffff8801b283df10] vfs_write at ffffffff8012d4ce
+    ffff8801b283df18: ffff8801b518a080 ffff8801b7a5c5c0
+    ffff8801b283df28: fffffffffffffff7 0000000000000002
+    ffff8801b283df38: 00007fe37c646000</code></pre></div>
+
+<h1 id="step2-">Step2 反汇编解析</h1>
+<hr />
+
+<p>sys_write调用进入vfs_write时，栈顶指针<em style="color:red">rsp = ffff8801b283df40</em>。再结合vfs_write的反汇编，可以反推栈上的数据来源是什么。</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">0xffffffff8012d400 &lt;vfs_write&gt;: 	   sub    <span class="nv">$0x28</span>%rsp	       
+<span class="s2">&quot;rsp=rsp-0x28=ffff8801b283df40-0x28=0xffff8801b283df18，开辟5个8字节的栈空间&quot;</span>
+0xffffffff8012d404 &lt;vfs_write+4&gt;:       mov    %rbx0x8<span class="o">(</span>%rsp<span class="o">)</span>	
+<span class="s2">&quot;rsp+0x8位置写入rbx的内容 ffff8801b7a5c5c0&quot;</span>
+0xffffffff8012d409 &lt;vfs_write+9&gt;:       mov    %rbp0x10<span class="o">(</span>%rsp<span class="o">)</span>	
+<span class="s2">&quot;rsp+0x10位置写入rbp的内容 fffffffffffffff7&quot;</span>
+0xffffffff8012d40e &lt;vfs_write+14&gt;:      mov    <span class="nv">$0xfffffffffffffff7</span>%rbx
+0xffffffff8012d415 &lt;vfs_write+21&gt;:      mov    %r120x18<span class="o">(</span>%rsp<span class="o">)</span>	
+<span class="s2">&quot;rsp+0x18位置写入r12的内容 0000000000000002&quot;</span>
+0xffffffff8012d41a &lt;vfs_write+26&gt;:      mov    %r130x20<span class="o">(</span>%rsp<span class="o">)</span>	
+<span class="s2">&quot; rsp+0x20位置写入r13内容00007fe37c646000 buf -- 这是一个虚拟地址&quot;</span>
+0xffffffff8012d41f &lt;vfs_write+31&gt;:      mov    %rdi%rbp
+0xffffffff8012d422 &lt;vfs_write+34&gt;:      testb  <span class="nv">$0x20x44</span><span class="o">(</span>%rdi<span class="o">)</span>
+<span class="s2">&quot;既然知道了栈上数据来源分别来自rbx rbp r12 r13的值，但还不知道它们的含义。</span>
+<span class="s2"> 因此，需要往上追溯sys_write里对这几个寄存器的操作。去了解这几个寄存器内容的含义。</span>
+<span class="s2"> 继续反汇编sys_write分析。&quot;</span>
+0xffffffff8012d5f0 &lt;sys_write&gt;: 	   sub    <span class="nv">$0x38</span>%rsp
+0xffffffff8012d5f4 &lt;sys_write+4&gt;:       mov    %r130x30<span class="o">(</span>%rsp<span class="o">)</span>
+0xffffffff8012d5f9 &lt;sys_write+9&gt;:       mov    %rsi%r13
+0xffffffff8012d5fc &lt;sys_write+12&gt;:      lea    0x14<span class="o">(</span>%rsp<span class="o">)</span>%rsi
+0xffffffff8012d601 &lt;sys_write+17&gt;:      mov    %rbx0x18<span class="o">(</span>%rsp<span class="o">)</span>
+0xffffffff8012d606 &lt;sys_write+22&gt;:      mov    %rbp0x20<span class="o">(</span>%rsp<span class="o">)</span>
+
+<span class="s2">&quot;rbp的内容由操作数0xfffffffffffffff7而来，跟对应栈上的内容一致&quot;</span>
+0xffffffff8012d60b &lt;sys_write+27&gt;:      mov    <span class="nv">$0xfffffffffffffff7</span>%rbp	//-EBADF
+0xffffffff8012d612 &lt;sys_write+34&gt;:      mov    %r120x28<span class="o">(</span>%rsp<span class="o">)</span>
+0xffffffff8012d617 &lt;sys_write+39&gt;:      mov    %rdx%r12
+0xffffffff8012d61a &lt;sys_write+42&gt;:      callq  0xffffffff8012e290 &lt;fget_light&gt;
+0xffffffff8012d61f &lt;sys_write+47&gt;:      <span class="nb">test</span>   %rax%rax
+0xffffffff8012d622 &lt;sys_write+50&gt;:      mov    %rax%rbx
+0xffffffff8012d625 &lt;sys_write+53&gt;:      je     0xffffffff8012d657 &lt;sys_write+103&gt;
+0xffffffff8012d627 &lt;sys_write+55&gt;:      mov    0x48<span class="o">(</span>%rax<span class="o">)</span>%rax
+0xffffffff8012d62b &lt;sys_write+59&gt;:      lea    0x8<span class="o">(</span>%rsp<span class="o">)</span>%rcx
+
+<span class="s2">&quot;在调用vfs_write前，以下几条执令分别将rbx r12 r13赋值给rdi，rdx，rsi。</span>
+<span class="s2"> 而这几个寄存器的含义正是被调用函数的入参。</span>
+<span class="s2"> 根据vfs_write的定义vfs_write(struct file *file const char __user *buf size_t count loff_t *pos)&quot;</span>
+0xffffffff8012d630 &lt;sys_write+64&gt;:      mov    %rbx%rdi	<span class="s2">&quot;rdi是入参1 - file&quot;</span>
+0xffffffff8012d633 &lt;sys_write+67&gt;:      mov    %r12%rdx	<span class="s2">&quot;rdx是入参3 - count&quot;</span>
+0xffffffff8012d636 &lt;sys_write+70&gt;:      mov    %r13%rsi	<span class="s2">&quot;rsi是入参2 - buf&quot;</span>
+0xffffffff8012d639 &lt;sys_write+73&gt;:      mov    %rax0x8<span class="o">(</span>%rsp<span class="o">)</span>
+0xffffffff8012d63e &lt;sys_write+78&gt;:      callq  0xffffffff8012d400 &lt;vfs_write&gt;
+0xffffffff8012d643 &lt;sys_write+83&gt;:      mov    %rax%rbp	<span class="s2">&quot;sys_write调用完后返回的第一条指令0xffffffff8012d643&quot;</span>
+0xffffffff8012d646 &lt;sys_write+86&gt;:      mov    0x8<span class="o">(</span>%rsp<span class="o">)</span>%rax</code></pre></div>
+
+<p>根据上面分析，可以清楚知道了栈上这几个数据的含义。</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#8 [ffff8801b283df10] vfs_write at ffffffff8012d4ce</span>
+    ffff8801b283df18: ffff8801b518a080 ffff8801b7a5c5c0 <span class="s2">&quot;&lt;- file&quot;</span>
+    ffff8801b283df28: fffffffffffffff7 <span class="m">0000000000000002</span> <span class="s2">&quot;&lt;- count&quot;</span>
+    ffff8801b283df38: 00007fe37c646000 <span class="s2">&quot;&lt;- buf&quot;</span></code></pre></div>
+
+<h1 id="section-3">解题</h1>
+<hr />
+
+<p>回到问题，写哪个文件触发的crash。根据file对象，查到dentry里的name字段，推出是写sysrq-trigger文件触发的crash。</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">crash&gt; file ffff8801b7a5c5c0 <span class="p">|</span> grep dentry
+    <span class="nv">dentry</span> <span class="o">=</span> 0xffff88008dbb2e90
+crash&gt; dentry 0xffff88008dbb2e90 <span class="p">|</span> grep -E <span class="s2">&quot;inode|name&quot;</span>
+  <span class="nv">d_name</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nv">name</span> <span class="o">=</span> 0xffff88008dbb2ec8 <span class="s2">&quot;sysrq-trigger&quot;</span>	//文件名称
+  <span class="nv">d_inode</span> <span class="o">=</span> 0xffff8801b87b7898					//文件inode对象</code></pre></div>
+
+<h1 id="section-4">题外话</h1>
+<hr />
+
+<p>实际上找哪个文件触发的crash并不需要这么麻烦，根据bash进程的task_struct可以查到进程打开的所有文件的。直接使用files命令就可以方便的查到有sysrq-trigger。</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">crash&gt; files
+PID: <span class="m">10109</span>  TASK: ffff8801b80ee440  CPU: <span class="m">0</span>   COMMAND: <span class="s2">&quot;bash&quot;</span>
+ROOT: /    CWD: /tmp/disk/tmp/
+ FD       FILE            DENTRY           INODE       TYPE PATH
+  <span class="m">0</span> ffff8801b5321c80 ffff8800887e9e90 ffff8801b3a5c088 CHR  /dev/pts/2
+  <span class="m">1</span> ffff8801b7a5c5c0 ffff88008dbb2e90 ffff8801b87b7898 REG  <span class="s2">&quot;/proc/sysrq-trigger&quot;</span>
+  <span class="m">2</span> ffff8801b5321c80 ffff8800887e9e90 ffff8801b3a5c088 CHR  /dev/pts/2
+ <span class="m">10</span> ffff8801b5321c80 ffff8800887e9e90 ffff8801b3a5c088 CHR  /dev/pts/2
+<span class="m">255</span> ffff8801b5321c80 ffff8800887e9e90 ffff8801b3a5c088 CHR  /dev/pts/2</code></pre></div>
+
+<p>但，如果我们感兴趣的是执行过程中的某个变量，而crash工具没有提供简单命令查询，那还是要手动去解析，所以掌握这种分析方法仍然是非常有必要的。</p>
+
+<h1 id="section-5">附：通用寄存器功能表</h1>
+<hr />
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">system_call x86_64
+/*
+ * Register setup:
+ * rax  system call number
+ * rdi  arg0
+ * rcx  return address for syscall/sysret C arg3
+ * rsi  arg1
+ * rdx  arg2
+ * r10  arg3    (--&gt; moved to rcx for C)
+ * r8   arg4
+ * r9   arg5
+ * r11  eflags for syscall/sysret temporary for C
+ * r12-r15rbprbx saved by C code not touched.
+ *
+ * Interrupts are off on entry.
+ * Only called from user space.
+ *
+ * XXX  if we had a free scratch register we could save the RSP into the stack fr&lt;x&gt;ame
+ *      and report it properly in ps. Unfortunately we haven&#39;t.
+ *
+ * When user can change the fr&lt;x&gt;ames always force IRET. That is because
+ * it deals with uncanonical addresses better. SYSRET has trouble
+ * with them due to bugs in both AMD and Intel CPUs.
+ */</code></pre></div>
+
+
+  </article>
+</div>
+
+      </div>
+    </div>
+    
+    <footer class="footer">
+  <div id="gotop">^</div>
+  <br>
+	@2015 Pithy Theme by Pawpaw.
+</footer>
+
+    
+  </body>
+
+</html>

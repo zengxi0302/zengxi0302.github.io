@@ -6,9 +6,222 @@
 </description>
     <link>http://zengxi0302.github.io/</link>
     <atom:link href="http://zengxi0302.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 17 Aug 2015 00:40:12 +0800</pubDate>
-    <lastBuildDate>Mon, 17 Aug 2015 00:40:12 +0800</lastBuildDate>
+    <pubDate>Wed, 19 Aug 2015 23:32:59 +0800</pubDate>
+    <lastBuildDate>Wed, 19 Aug 2015 23:32:59 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>crash手工解析栈方法</title>
+        <description>&lt;h1 id=&quot;section&quot;&gt;引言&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;在处理主机重启的问题时，我们关心的入参或运行时变量值大多可以通过寄存器记录的数据获取。
+但是，有时候有些我们关心的数据不一定就直接存在在寄存器，又或栈顶被破坏了，bt无法解析堆栈。
+此时，我们就需要尝试通过手动解析栈的方式获得我们感兴趣的数据。&lt;/p&gt;
+
+&lt;h1 id=&quot;section-1&quot;&gt;一个例子&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;下面，以echo c &amp;gt; /proc/sysrq-trigger触发crash的例子说明如何手工解栈。&lt;/p&gt;
+
+&lt;p&gt;bt解析的调用栈如下。&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;crash&amp;gt; bt
+PID: 10109  TASK: ffff8801b80ee440  CPU: 0   COMMAND: &amp;quot;bash&amp;quot;
+ #0 [ffff8801b283db30] crash_kexec at ffffffff8008d88a
+ #1 [ffff8801b283dc00] oops_end at ffffffff8040edc8
+ #2 [ffff8801b283dc20] __bad_area_nosemaphore at ffffffff8001e67d
+ #3 [ffff8801b283dce0] do_page_fault at ffffffff80411b94
+ #4 [ffff8801b283dde0] page_fault at ffffffff8040e0d8
+    [exception RIP: sysrq_handle_crash+13]
+    RIP: ffffffff802c43fd  RSP: ffff8801b283de90  RFLAGS: 00010096
+    RAX: 0000000000000010  RBX: ffffffff807188c0  RCX: 0000000000000010
+    RDX: 0000000000000000  RSI: 00000000cc95cc95  RDI: 0000000000000063
+    RBP: 0000000000000063   R8: ffffffff808e779d   R9: 0000000000000056
+    R10: 0000000000000056  R11: 0000000000000046  R12: 0000000000000000
+    R13: 0000000000000003  R14: 0000000000000000  R15: 0000000000000002
+    ORIG_RAX: ffffffffffffffff  CS: 10000e030  SS: e02b
+ #5 [ffff8801b283de90] __handle_sysrq at ffffffff802c4b5d
+ #6 [ffff8801b283dec0] write_sysrq_trigger at ffffffff802c4be8
+ #7 [ffff8801b283ded0] proc_reg_write at ffffffff8018e882
+ #8 [ffff8801b283df10] vfs_write at ffffffff8012d4ce
+ #9 [ffff8801b283df40] sys_write at ffffffff8012d643
+#10 [ffff8801b283df80] system_call_fastpath at ffffffff80415cc3
+    RIP: 00007fe37bea9be0  RSP: 00007ffd65fc3958  RFLAGS: 00000246
+    RAX: 0000000000000001  RBX: ffffffff80415cc3  RCX: 0000000000000001
+    RDX: 0000000000000002  RSI: 00007fe37c646000  RDI: 0000000000000001
+    RBP: 0000000000000002   R8: 00007fe37c7ad700   R9: 0000000000000020
+    R10: 00007fe37c150e30  R11: 0000000000000246  R12: 00007fe37c14f7c0
+    R13: 00007fe37c646000  R14: 0000000000000002  R15: 00000000006b4430
+    ORIG_RAX: 0000000000000001  CS: e033  SS: e02b&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;section-2&quot;&gt;问题&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;假设，我们并不知道这是通过echo c &amp;gt; /proc/sysrq-trigger造成的crash。单纯的从堆栈来看，只能看出来是在调sys_write写一个文件时触发的主机重启。那么，&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;问题是：&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;写哪一个文件时触发的主机重启？
+显然sysrq_handle_crash显示的寄存器内容并没有提供这样的信息。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;思路是：&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;vfs_write肯定有一个打开要写的file对象，而file里的dentry字段会保存有文件名。虽然调用栈#8 vfs_write并提供寄存器信息，但是栈上可能会有我们需要的file对象地址，因此需要手工解析栈。&lt;/p&gt;
+
+&lt;h1 id=&quot;step1-&quot;&gt;Step1 打出栈内容&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;利用bt -f打印出每个桢的栈内容，截取其中部分。&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#7 [ffff8801b283ded0] proc_reg_write at ffffffff8018e882&lt;/span&gt;
+    ffff8801b283ded8: 00007fe37c646000 0000000000000002
+    ffff8801b283dee8: ffff8801b7a5c5c0 ffff8801b283df50
+    ffff8801b283def8: 00007fe37c646000 00007ffd65fc3a20
+    ffff8801b283df08: &lt;span class=&quot;m&quot;&gt;0000000000000000&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;ffffffff8012d4ce &amp;lt;- vfs_write里调用proc_reg_write返回&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;后要执行的下一条指令。因为调用回来要知道从哪里继续执行，所以会压栈&amp;quot;&lt;/span&gt;
+ &lt;span class=&quot;m&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ffff8801b283df10&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; vfs_write at ffffffff8012d4ce
+    ffff8801b283df18: ffff8801b518a080 ffff8801b7a5c5c0
+    ffff8801b283df28: fffffffffffffff7 0000000000000002
+    ffff8801b283df38: 00007fe37c646000 &lt;span class=&quot;s2&quot;&gt;&amp;quot;ffffffff8012d643 &amp;lt;- 同上，这是sys_write调用vfs_write&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;返回后将要执行的下一条指令。&amp;quot;&lt;/span&gt;
+ &lt;span class=&quot;m&quot;&gt;9&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ffff8801b283df40&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; sys_write at ffffffff8012d643
+    ffff8801b283df48: 00000000006b4430 0000000000000000
+    ffff8801b283df58: 00000000006b4430 0000000000000002
+    ffff8801b283df68: 00007fe37c646000 00007fe37c14f7c0
+    ffff8801b283df78: &lt;span class=&quot;m&quot;&gt;0000000000000002&lt;/span&gt; ffffffff80415cc3
+&lt;span class=&quot;c&quot;&gt;#10 [ffff8801b283df80] system_call_fastpath at ffffffff80415cc3&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;vfs_write函数从进入，到执行到vfs_write再往下调用的最后一条指令&lt;em style=&quot;color:red&quot;&gt;ffffffff8012d4ce&lt;/em&gt;，栈中内容分别是&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;#8 [ffff8801b283df10] vfs_write at ffffffff8012d4ce
+    ffff8801b283df18: ffff8801b518a080 ffff8801b7a5c5c0
+    ffff8801b283df28: fffffffffffffff7 0000000000000002
+    ffff8801b283df38: 00007fe37c646000&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;step2-&quot;&gt;Step2 反汇编解析&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;sys_write调用进入vfs_write时，栈顶指针&lt;em style=&quot;color:red&quot;&gt;rsp = ffff8801b283df40&lt;/em&gt;。再结合vfs_write的反汇编，可以反推栈上的数据来源是什么。&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;0xffffffff8012d400 &amp;lt;vfs_write&amp;gt;: 	   sub    &lt;span class=&quot;nv&quot;&gt;$0x28&lt;/span&gt;%rsp	       
+&lt;span class=&quot;s2&quot;&gt;&amp;quot;rsp=rsp-0x28=ffff8801b283df40-0x28=0xffff8801b283df18，开辟5个8字节的栈空间&amp;quot;&lt;/span&gt;
+0xffffffff8012d404 &amp;lt;vfs_write+4&amp;gt;:       mov    %rbx0x8&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;	
+&lt;span class=&quot;s2&quot;&gt;&amp;quot;rsp+0x8位置写入rbx的内容 ffff8801b7a5c5c0&amp;quot;&lt;/span&gt;
+0xffffffff8012d409 &amp;lt;vfs_write+9&amp;gt;:       mov    %rbp0x10&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;	
+&lt;span class=&quot;s2&quot;&gt;&amp;quot;rsp+0x10位置写入rbp的内容 fffffffffffffff7&amp;quot;&lt;/span&gt;
+0xffffffff8012d40e &amp;lt;vfs_write+14&amp;gt;:      mov    &lt;span class=&quot;nv&quot;&gt;$0xfffffffffffffff7&lt;/span&gt;%rbx
+0xffffffff8012d415 &amp;lt;vfs_write+21&amp;gt;:      mov    %r120x18&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;	
+&lt;span class=&quot;s2&quot;&gt;&amp;quot;rsp+0x18位置写入r12的内容 0000000000000002&amp;quot;&lt;/span&gt;
+0xffffffff8012d41a &amp;lt;vfs_write+26&amp;gt;:      mov    %r130x20&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;	
+&lt;span class=&quot;s2&quot;&gt;&amp;quot; rsp+0x20位置写入r13内容00007fe37c646000 buf -- 这是一个虚拟地址&amp;quot;&lt;/span&gt;
+0xffffffff8012d41f &amp;lt;vfs_write+31&amp;gt;:      mov    %rdi%rbp
+0xffffffff8012d422 &amp;lt;vfs_write+34&amp;gt;:      testb  &lt;span class=&quot;nv&quot;&gt;$0x20x44&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rdi&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;&amp;quot;既然知道了栈上数据来源分别来自rbx rbp r12 r13的值，但还不知道它们的含义。&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt; 因此，需要往上追溯sys_write里对这几个寄存器的操作。去了解这几个寄存器内容的含义。&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt; 继续反汇编sys_write分析。&amp;quot;&lt;/span&gt;
+0xffffffff8012d5f0 &amp;lt;sys_write&amp;gt;: 	   sub    &lt;span class=&quot;nv&quot;&gt;$0x38&lt;/span&gt;%rsp
+0xffffffff8012d5f4 &amp;lt;sys_write+4&amp;gt;:       mov    %r130x30&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+0xffffffff8012d5f9 &amp;lt;sys_write+9&amp;gt;:       mov    %rsi%r13
+0xffffffff8012d5fc &amp;lt;sys_write+12&amp;gt;:      lea    0x14&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;%rsi
+0xffffffff8012d601 &amp;lt;sys_write+17&amp;gt;:      mov    %rbx0x18&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+0xffffffff8012d606 &amp;lt;sys_write+22&amp;gt;:      mov    %rbp0x20&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;s2&quot;&gt;&amp;quot;rbp的内容由操作数0xfffffffffffffff7而来，跟对应栈上的内容一致&amp;quot;&lt;/span&gt;
+0xffffffff8012d60b &amp;lt;sys_write+27&amp;gt;:      mov    &lt;span class=&quot;nv&quot;&gt;$0xfffffffffffffff7&lt;/span&gt;%rbp	//-EBADF
+0xffffffff8012d612 &amp;lt;sys_write+34&amp;gt;:      mov    %r120x28&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+0xffffffff8012d617 &amp;lt;sys_write+39&amp;gt;:      mov    %rdx%r12
+0xffffffff8012d61a &amp;lt;sys_write+42&amp;gt;:      callq  0xffffffff8012e290 &amp;lt;fget_light&amp;gt;
+0xffffffff8012d61f &amp;lt;sys_write+47&amp;gt;:      &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;   %rax%rax
+0xffffffff8012d622 &amp;lt;sys_write+50&amp;gt;:      mov    %rax%rbx
+0xffffffff8012d625 &amp;lt;sys_write+53&amp;gt;:      je     0xffffffff8012d657 &amp;lt;sys_write+103&amp;gt;
+0xffffffff8012d627 &amp;lt;sys_write+55&amp;gt;:      mov    0x48&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rax&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;%rax
+0xffffffff8012d62b &amp;lt;sys_write+59&amp;gt;:      lea    0x8&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;%rcx
+
+&lt;span class=&quot;s2&quot;&gt;&amp;quot;在调用vfs_write前，以下几条执令分别将rbx r12 r13赋值给rdi，rdx，rsi。&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt; 而这几个寄存器的含义正是被调用函数的入参。&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt; 根据vfs_write的定义vfs_write(struct file *file const char __user *buf size_t count loff_t *pos)&amp;quot;&lt;/span&gt;
+0xffffffff8012d630 &amp;lt;sys_write+64&amp;gt;:      mov    %rbx%rdi	&lt;span class=&quot;s2&quot;&gt;&amp;quot;rdi是入参1 - file&amp;quot;&lt;/span&gt;
+0xffffffff8012d633 &amp;lt;sys_write+67&amp;gt;:      mov    %r12%rdx	&lt;span class=&quot;s2&quot;&gt;&amp;quot;rdx是入参3 - count&amp;quot;&lt;/span&gt;
+0xffffffff8012d636 &amp;lt;sys_write+70&amp;gt;:      mov    %r13%rsi	&lt;span class=&quot;s2&quot;&gt;&amp;quot;rsi是入参2 - buf&amp;quot;&lt;/span&gt;
+0xffffffff8012d639 &amp;lt;sys_write+73&amp;gt;:      mov    %rax0x8&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+0xffffffff8012d63e &amp;lt;sys_write+78&amp;gt;:      callq  0xffffffff8012d400 &amp;lt;vfs_write&amp;gt;
+0xffffffff8012d643 &amp;lt;sys_write+83&amp;gt;:      mov    %rax%rbp	&lt;span class=&quot;s2&quot;&gt;&amp;quot;sys_write调用完后返回的第一条指令0xffffffff8012d643&amp;quot;&lt;/span&gt;
+0xffffffff8012d646 &amp;lt;sys_write+86&amp;gt;:      mov    0x8&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%rsp&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;%rax&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;根据上面分析，可以清楚知道了栈上这几个数据的含义。&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#8 [ffff8801b283df10] vfs_write at ffffffff8012d4ce&lt;/span&gt;
+    ffff8801b283df18: ffff8801b518a080 ffff8801b7a5c5c0 &lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;lt;- file&amp;quot;&lt;/span&gt;
+    ffff8801b283df28: fffffffffffffff7 &lt;span class=&quot;m&quot;&gt;0000000000000002&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;lt;- count&amp;quot;&lt;/span&gt;
+    ffff8801b283df38: 00007fe37c646000 &lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;lt;- buf&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;section-3&quot;&gt;解题&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;回到问题，写哪个文件触发的crash。根据file对象，查到dentry里的name字段，推出是写sysrq-trigger文件触发的crash。&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;crash&amp;gt; file ffff8801b7a5c5c0 &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep dentry
+    &lt;span class=&quot;nv&quot;&gt;dentry&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xffff88008dbb2e90
+crash&amp;gt; dentry 0xffff88008dbb2e90 &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep -E &lt;span class=&quot;s2&quot;&gt;&amp;quot;inode|name&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;d_name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xffff88008dbb2ec8 &lt;span class=&quot;s2&quot;&gt;&amp;quot;sysrq-trigger&amp;quot;&lt;/span&gt;	//文件名称
+  &lt;span class=&quot;nv&quot;&gt;d_inode&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xffff8801b87b7898					//文件inode对象&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;section-4&quot;&gt;题外话&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;实际上找哪个文件触发的crash并不需要这么麻烦，根据bash进程的task_struct可以查到进程打开的所有文件的。直接使用files命令就可以方便的查到有sysrq-trigger。&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;crash&amp;gt; files
+PID: &lt;span class=&quot;m&quot;&gt;10109&lt;/span&gt;  TASK: ffff8801b80ee440  CPU: &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;   COMMAND: &lt;span class=&quot;s2&quot;&gt;&amp;quot;bash&amp;quot;&lt;/span&gt;
+ROOT: /    CWD: /tmp/disk/tmp/
+ FD       FILE            DENTRY           INODE       TYPE PATH
+  &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; ffff8801b5321c80 ffff8800887e9e90 ffff8801b3a5c088 CHR  /dev/pts/2
+  &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; ffff8801b7a5c5c0 ffff88008dbb2e90 ffff8801b87b7898 REG  &lt;span class=&quot;s2&quot;&gt;&amp;quot;/proc/sysrq-trigger&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; ffff8801b5321c80 ffff8800887e9e90 ffff8801b3a5c088 CHR  /dev/pts/2
+ &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt; ffff8801b5321c80 ffff8800887e9e90 ffff8801b3a5c088 CHR  /dev/pts/2
+&lt;span class=&quot;m&quot;&gt;255&lt;/span&gt; ffff8801b5321c80 ffff8800887e9e90 ffff8801b3a5c088 CHR  /dev/pts/2&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;但，如果我们感兴趣的是执行过程中的某个变量，而crash工具没有提供简单命令查询，那还是要手动去解析，所以掌握这种分析方法仍然是非常有必要的。&lt;/p&gt;
+
+&lt;h1 id=&quot;section-5&quot;&gt;附：通用寄存器功能表&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;system_call x86_64
+/*
+ * Register setup:
+ * rax  system call number
+ * rdi  arg0
+ * rcx  return address for syscall/sysret C arg3
+ * rsi  arg1
+ * rdx  arg2
+ * r10  arg3    (--&amp;gt; moved to rcx for C)
+ * r8   arg4
+ * r9   arg5
+ * r11  eflags for syscall/sysret temporary for C
+ * r12-r15rbprbx saved by C code not touched.
+ *
+ * Interrupts are off on entry.
+ * Only called from user space.
+ *
+ * XXX  if we had a free scratch register we could save the RSP into the stack fr&amp;lt;x&amp;gt;ame
+ *      and report it properly in ps. Unfortunately we haven&amp;#39;t.
+ *
+ * When user can change the fr&amp;lt;x&amp;gt;ames always force IRET. That is because
+ * it deals with uncanonical addresses better. SYSRET has trouble
+ * with them due to bugs in both AMD and Intel CPUs.
+ */&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Wed, 19 Aug 2015 06:47:00 +0800</pubDate>
+        <link>http://zengxi0302.github.io/linux/2015/08/19/analysis-crash-stack.html</link>
+        <guid isPermaLink="true">http://zengxi0302.github.io/linux/2015/08/19/analysis-crash-stack.html</guid>
+        
+        
+        <category>linux</category>
+        
+      </item>
     
       <item>
         <title>两张图了解linux IO子系统</title>
