@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>    
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+
+  <title>linux常用定位方法-iostat</title>
+  <meta name="description" content="iostat分析io性能">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://zengxi0302.github.io/linux/2015/08/20/iostat.html">
+  <link rel="alternate" type="application/atom+xml" title="zengxi0302's  blog" href="http://zengxi0302.github.io/feed.xml" />
+  <script src="/scripts/jquery-1.11.2.min.js"></script>
+  <script src="/scripts/pithy.js"></script>
+</head>
+
+
+  <body>
+    <header class="header">
+	<div class="header-container">
+		<div class="nav">
+			
+				<li>
+					<a href="/index.html">home</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/archive.html">archive</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/category.html">category</a>
+				</li>			
+			
+			
+				<li>
+					<a href="/about.html">about</a>
+				</li>			
+			
+		</div>
+		<div class="description"> forgeting behind and looking foward! </div>		
+		<ul class="social-links">
+			<li>
+				<a href="https://github.com/zengxi0302" title="Github">
+					<img width="19px" height="19px" src="/images/github.png"/>
+				</a>
+			</li>
+			<li>
+				<a href="/feed.xml" title="RSS">
+					<img width="19px" height="19px" src="/images/rss.png"/>
+				</a>
+			</li>
+		</ul>		
+	</div>
+</header>
+
+    <br>
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+  <br>
+  <header class="post-header">
+    <h1 class="post-title">linux常用定位方法-iostat</h1>
+    <p class="post-meta">Aug 20, 2015</p>
+  </header>
+
+  <article class="post-content">
+    <h2 id="iostatio">iostat分析io性能</h2>
+<hr />
+
+<p>对于I/O-bond类型的进程(如写话单、读写数据库等与磁盘紧密相关的进程)，我们经常用iostat工具查看进程IO请求下发的数量、系统处理IO请求的耗时，进而分析进程与操作系统的交互过程中IO方面是否存在瓶颈。
+下面通过iostat命令的使用实例，说明使用iostat查看IO请求下发情况、系统IO处理能力的方法，以及命令执行结果中各字段的含义。</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">dd if=/dev/zero of=test.img bs=1M count=1024 &amp; //写一个1G大小的文件，块大小1M
+
+Device:  rrqm/s   wrqm/s    r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
+sda       0.00     4.00    0.00  106.00     0.00    44.73   864.30    55.80  678.11    0.00  678.11   9.43 100.00
+sda       0.00     2.00    4.00   90.00     0.02    41.98   914.98    46.67  522.81  129.00  540.31  10.64 100.00
+sda       0.00     6.00    0.00   96.00     0.00    44.95   959.00    45.71  317.92    0.00  317.92  10.42 100.00
+sda       0.00   117.00    1.00   86.00     0.00    39.25   924.14    32.83  560.55  188.00  564.88  11.49 100.00
+sda       0.00     3.00    0.00   97.00     0.00    44.55   940.54    53.12  339.96    0.00  339.96  10.31 100.00</code></pre></div>
+
+<h2 id="section">各个字段含义</h2>
+<hr />
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">rrqm/s  : 每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并
+		  (即1s内两次读同一块算一次，统计的是io覆盖区块程度)
+wrqm/s  : 每秒对该设备的写请求被合并次数
+r/s     : 每秒完成的读次数
+w/s     : 每秒完成的写次数
+rsec/s  : 每秒读数据量(数据块为单位，0.5kB)
+wsec/s  : 每秒写数据量(数据块为单位，0.5kB)
+avgrq-sz: 平均每次IO操作的数据量(扇区数为单位)
+avgqu-sz: 平均等待处理的IO请求队列长度（单位个IO请求）
+await   : 平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)
+svctm   : 平均每次IO请求的处理时间(毫秒为单位)
+%util   : 采用周期内用于IO操作的时间比率，即IO队列非空的时间比率</code></pre></div>
+
+<h2 id="iostat">iostat数据解读</h2>
+<hr />
+
+<p>因为以1M的块大小写文件，且没有指定iflag=direct，因次这个写任务会走buffer IO。</p>
+
+<ol>
+  <li>从wrqm/s项非零看，IO调度层存在合并的IO，也说明的确是buffer IO。</li>
+  <li>从w/s项可知该本地硬盘的iops写能力只能平均达100iops/s，说明磁盘本身的转速不高。</li>
+  <li>从wMB/s项显示吞吐量最高达45MB/s左右，一样不高。</li>
+  <li>从avgqu-sz看平均队列深度为50左右，而svctm为10ms，所以await值会比较高，400~500的均值正常。</li>
+</ol>
+
+<p>综合评价，该本地磁盘的IO性能偏低。</p>
+
+
+  </article>
+</div>
+
+      </div>
+    </div>
+    
+    <footer class="footer">
+  <div id="gotop">^</div>
+  <br>
+	@2015 Pithy Theme by Pawpaw.
+</footer>
+
+    
+  </body>
+
+</html>
