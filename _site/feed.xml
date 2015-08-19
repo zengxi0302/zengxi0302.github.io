@@ -6,8 +6,8 @@
 </description>
     <link>http://zengxi0302.github.io/</link>
     <atom:link href="http://zengxi0302.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 20 Aug 2015 00:33:11 +0800</pubDate>
-    <lastBuildDate>Thu, 20 Aug 2015 00:33:11 +0800</lastBuildDate>
+    <pubDate>Thu, 20 Aug 2015 00:47:03 +0800</pubDate>
+    <lastBuildDate>Thu, 20 Aug 2015 00:47:03 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -21,27 +21,27 @@
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;dd if=/dev/zero of=test.img bs=1M count=1024 &amp;amp; //写一个1G大小的文件，块大小1M
 
 Device:  rrqm/s   wrqm/s    r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
-sda       0.00     4.00    0.00  106.00     0.00    44.73   864.30    55.80  678.11    0.00  678.11   9.43 100.00
-sda       0.00     2.00    4.00   90.00     0.02    41.98   914.98    46.67  522.81  129.00  540.31  10.64 100.00
-sda       0.00     6.00    0.00   96.00     0.00    44.95   959.00    45.71  317.92    0.00  317.92  10.42 100.00
-sda       0.00   117.00    1.00   86.00     0.00    39.25   924.14    32.83  560.55  188.00  564.88  11.49 100.00
-sda       0.00     3.00    0.00   97.00     0.00    44.55   940.54    53.12  339.96    0.00  339.96  10.31 100.00&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+sda        0.00        4.00    0.00  106.00    0.00      44.73   864.30     55.80      678.11    0.00    678.11    9.43 100.00
+sda        0.00        2.00    4.00   90.00     0.02      41.98   914.98     46.67      522.81  129.0    540.31   10.64 100.00
+sda        0.00        6.00    0.00   96.00     0.00      44.95   959.00     45.71      317.92    0.00    317.92   10.42 100.00
+sda        0.00      117.0    1.00   86.00     0.00      39.25   924.14     32.83      560.55  188.0    564.88   11.49 100.00
+sda        0.00        3.00    0.00   97.00     0.00      44.55   940.54     53.12      339.96    0.00    339.96   10.31 100.00&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h2 id=&quot;section&quot;&gt;各个字段含义&lt;/h2&gt;
 &lt;hr /&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;rrqm/s  : 每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并
-		  (即1s内两次读同一块算一次，统计的是io覆盖区块程度)
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;rrqm/s   : 每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并
+		   (即1s内两次读同一块算一次，统计的是io覆盖区块程度)
 wrqm/s  : 每秒对该设备的写请求被合并次数
-r/s     : 每秒完成的读次数
-w/s     : 每秒完成的写次数
-rsec/s  : 每秒读数据量(数据块为单位，0.5kB)
-wsec/s  : 每秒写数据量(数据块为单位，0.5kB)
-avgrq-sz: 平均每次IO操作的数据量(扇区数为单位)
+r/s          : 每秒完成的读次数
+w/s         : 每秒完成的写次数
+rsec/s     : 每秒读数据量(数据块为单位，0.5kB)
+wsec/s    : 每秒写数据量(数据块为单位，0.5kB)
+avgrq-sz : 平均每次IO操作的数据量(扇区数为单位)
 avgqu-sz: 平均等待处理的IO请求队列长度（单位个IO请求）
-await   : 平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)
-svctm   : 平均每次IO请求的处理时间(毫秒为单位)
-%util   : 采用周期内用于IO操作的时间比率，即IO队列非空的时间比率&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+await      : 平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)
+svctm     : 平均每次IO请求的处理时间(毫秒为单位)
+%util      : 采用周期内用于IO操作的时间比率，即IO队列非空的时间比率&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h2 id=&quot;iostat&quot;&gt;iostat数据解读&lt;/h2&gt;
 &lt;hr /&gt;
