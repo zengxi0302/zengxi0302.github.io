@@ -6,9 +6,85 @@
 </description>
     <link>http://zengxi0302.github.io/</link>
     <atom:link href="http://zengxi0302.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 20 Aug 2015 01:20:40 +0800</pubDate>
-    <lastBuildDate>Thu, 20 Aug 2015 01:20:40 +0800</lastBuildDate>
+    <pubDate>Sun, 23 Aug 2015 17:53:26 +0800</pubDate>
+    <lastBuildDate>Sun, 23 Aug 2015 17:53:26 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>常用正则表达式</title>
+        <description>&lt;p&gt;&lt;strong&gt;常用正则表达式操作符&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;操作符			用途
+
+.（句号）		匹配任意单个字符。
+^（脱字号）		匹配出现在行首或字符串开始位置的空字符串。
+$（美元符号）	匹配出现在行末的空字符串。
+A				匹配大写字母 A。
+a				匹配小写字母 a。
+\d				匹配任意一位数字。
+\D				匹配任意单个非数字字符。
+\w				匹配任意单个字母数字字符，同义词是 [:alnum:]。
+[A-E]			匹配任意大写的 A、B、C、D 或 E。
+[^A-E]			匹配除A、B、C、D 和 E 之外的任意字符。
+X?				匹配出现零次或一次的大写字母 X。
+X*				匹配零个或任意个大写 X。
+X+				匹配一个或多个字母 X。
+X{n}			精确匹配 n 个字母 X。
+X{n,m}			匹配最少 n 个并且不超过 m 个字母 X。如果省略 m，表达式将尝试匹配最少 n 个 X。
+(abc|def)+		匹配一连串的（最少一个） abc 或 def；abc 和 def 将匹配。
+
+署名类
+[:alnum:]		字符和数字
+[:digit:]		数字，等价于[0-9]
+[:blank:]		空格和制表符
+[:upper:]		大写字母
+[:lower:]		小写字母&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;应用示例&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;1.查找以”H”开头的名称&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;grep -E &#39;^H&#39;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;2.查找以”H”为结尾的名称&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;grep -E &#39;H$&#39;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;3.查找空行&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;grep -E &#39;^$&#39;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;4.查找多个备选项&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;grep -E &#39;^(c|d)&#39;&lt;/code&gt;			//以c和d开头&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;grep -E &#39;^[a-d]&#39;&lt;/code&gt;			//以a/b/c/d开头的&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;grep -E &#39;^[a-cmn]&#39;&lt;/code&gt;		//以a/b/c开头，或得m/n开头的&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;grep -E &#39;^[A-z]&#39;&lt;/code&gt;			//以任意字符开头的, A-z相当于A-Za-z&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;^的反转含义&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;grep -E &#39;[^a-z]&#39;&lt;/code&gt;			//不是以a-z开头的&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;5.重复&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;grep -E &#39;^[0-9]{11}&#39;&lt;/code&gt;		//手机号码，0-9开头，必须11位数&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;grep -E &#39;^[A-z][A-z0-9]{2,7}&#39;&lt;/code&gt;		//用户名，以A-z开头，后面可跟任意2到7个字符或数字&lt;/p&gt;
+
+&lt;p&gt;?,*,+分别表示重复0次或1次，重复任意次，重复1次或多次。&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 24 Aug 2015 01:00:00 +0800</pubDate>
+        <link>http://zengxi0302.github.io/shell/2015/08/24/regex-example.html</link>
+        <guid isPermaLink="true">http://zengxi0302.github.io/shell/2015/08/24/regex-example.html</guid>
+        
+        
+        <category>shell</category>
+        
+      </item>
     
       <item>
         <title>linux常用定位方法-netstat</title>
@@ -807,45 +883,6 @@ default:
         <pubDate>Fri, 17 Jul 2015 08:18:32 +0800</pubDate>
         <link>http://zengxi0302.github.io/linux/2015/07/17/makefile.html</link>
         <guid isPermaLink="true">http://zengxi0302.github.io/linux/2015/07/17/makefile.html</guid>
-        
-        
-        <category>linux</category>
-        
-      </item>
-    
-      <item>
-        <title>在ubuntu14.04下安装systemtap</title>
-        <description>&lt;h3 id=&quot;debuginfo&quot;&gt;&lt;em&gt;获取对应内核版本的debuginfo安装包&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;首先，查询所用系统的内核版本&lt;/p&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;zengxi&lt;/span&gt;&lt;span class=&quot;vi&quot;&gt;@zengxi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;ubuntu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/$ uname -r&lt;/span&gt;
-&lt;span class=&quot;sr&quot;&gt;3.13.0-24-generic&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;本人机器是ubuntu14.04，可到一下网址获取debuginfo包&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://ddebs.ubuntu.com/pool/main/l/linux/linux-image-3.13.0-24-generic-dbgsym_3.13.0-24.46_i386.ddeb&quot;&gt;http://ddebs.ubuntu.com/pool/main/l/linux/linux-image-3.13.0-24-generic-dbgsym_3.13.0-24.46_i386.ddeb&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;然后，使用&lt;code&gt;dpkg -i linux-image-3.13.0-24-generic-dbgsym_3.13.0-24.46_i386.ddeb&lt;/code&gt;安装&lt;/p&gt;
-
-&lt;p&gt;安装完后确认/usr/lib/debug目录下有安装的文件。&lt;/p&gt;
-
-&lt;h3 id=&quot;systemtap&quot;&gt;&lt;em&gt;安装systemtap&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;sudo apt-get install systemtap&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;使用命令测试一下是不是安装成功&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;stap -ve &#39;probe begin { log(&quot;hello world&quot;) exit () }&#39;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;具体systemtap的原理和介绍可参考这篇文档&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://www.ibm.com/developerworks/cn/linux/l-cn-systemtap3/index.html&quot;&gt;http://www.ibm.com/developerworks/cn/linux/l-cn-systemtap3/index.html&lt;/a&gt;&lt;/p&gt;
-
-</description>
-        <pubDate>Fri, 17 Jul 2015 07:54:32 +0800</pubDate>
-        <link>http://zengxi0302.github.io/linux/2015/07/17/systemtap-on-ubuntu14.04.html</link>
-        <guid isPermaLink="true">http://zengxi0302.github.io/linux/2015/07/17/systemtap-on-ubuntu14.04.html</guid>
         
         
         <category>linux</category>
